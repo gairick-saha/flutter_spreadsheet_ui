@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 enum BorderDirection {
@@ -184,10 +186,9 @@ class FlutterSpreadsheetUIBaseCell extends StatelessWidget {
         cursor: SystemMouseCursors.resizeColumn,
         child: GestureDetector(
           onHorizontalDragUpdate: (details) {
-            print("Drag started global position: ${details.globalPosition}");
-            print("Drag started local position: ${details.localPosition}");
-            print(
-                "Drag started local position axis-x: ${details.localPosition.dx}");
+            log("Drag started global position: ${details.globalPosition}");
+            log("Drag started local position: ${details.localPosition}");
+            log("Drag started local position axis-x: ${details.localPosition.dx}");
           },
           child: DecoratedBox(
             decoration: BoxDecoration(

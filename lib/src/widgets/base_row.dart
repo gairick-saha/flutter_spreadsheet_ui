@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import '../../flutter_spreadsheet_ui.dart';
@@ -34,7 +36,7 @@ class BaseRow extends StatelessWidget {
         alignment: column.contentAlignment ?? Alignment.center,
         borderDirection: borderDirection,
         onFocusChanged: (bool hasFocus) {
-          print("Focus changed for $cellId : $hasFocus");
+          log("Focus changed for $cellId : $hasFocus");
         },
         child: row!.cells[columnIndex].toWidget(context, cellId),
       );
@@ -47,7 +49,7 @@ class BaseRow extends StatelessWidget {
         borderDirection: borderDirection,
         onTap: column.onCellPressed,
         onFocusChanged: (bool hasFocus) {
-          print("Focus changed for $cellId : $hasFocus");
+          log("Focus changed for $cellId : $hasFocus");
         },
         child: column.toWidget(context, cellId),
       );
