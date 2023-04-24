@@ -10,13 +10,26 @@ class FlutterSpreadsheetUIHeaderRow extends StatelessWidget {
     Key? key,
     required this.columns,
     required this.config,
+    required this.headerHeight,
+    required this.freezedCellWidth,
     required this.scrollController,
+    required this.onCellWidthDragStart,
+    required this.onCellWidthDrag,
+    required this.onCellWidthDragEnd,
+    required this.onCellHeightDrag,
+    required this.onCellHeightDragEnd,
   }) : super(key: key);
 
   final List<FlutterSpreadsheetUIColumn> columns;
   final FlutterSpreadsheetUIConfig config;
+  final double headerHeight;
+  final double freezedCellWidth;
   final ScrollController scrollController;
-
+  final Function(String cellId) onCellWidthDragStart;
+  final Function(double updatedCellWidth, String cellId) onCellWidthDrag;
+  final Function(double updatedCellWidth, String cellId) onCellWidthDragEnd;
+  final Function(double updatedCellHeight, String cellId) onCellHeightDrag;
+  final Function(double updatedCellHeight, String cellId) onCellHeightDragEnd;
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
@@ -32,12 +45,15 @@ class FlutterSpreadsheetUIHeaderRow extends StatelessWidget {
           BaseRow(
             rowIndex: 0,
             column: columns.first,
-            cellHeight: config.headerHeight ?? config.cellHeight,
-            cellWidth: config.freezedCellWidth ??
-                columns.first.width ??
-                config.cellWidth,
+            cellHeight: headerHeight,
+            cellWidth: freezedCellWidth,
             columnIndex: columns.indexOf(columns.first),
             borderDirection: BorderDirection.topBottomLeftRight,
+            onCellWidthDrag: onCellWidthDrag,
+            onCellWidthDragEnd: onCellWidthDragEnd,
+            onCellHeightDrag: onCellHeightDrag,
+            onCellHeightDragEnd: onCellHeightDragEnd,
+            onCellWidthDragStart: onCellWidthDragStart,
           ),
           Flexible(
             child: ScrollShadow(
@@ -63,10 +79,15 @@ class FlutterSpreadsheetUIHeaderRow extends StatelessWidget {
                     return BaseRow(
                       rowIndex: 0,
                       column: columns[columnIndex],
-                      cellHeight: config.headerHeight ?? config.cellHeight,
+                      cellHeight: headerHeight,
                       cellWidth: columns[columnIndex].width ?? config.cellWidth,
                       columnIndex: columnIndex,
                       borderDirection: BorderDirection.topBottomRight,
+                      onCellWidthDrag: onCellWidthDrag,
+                      onCellWidthDragEnd: onCellWidthDragEnd,
+                      onCellHeightDrag: onCellHeightDrag,
+                      onCellHeightDragEnd: onCellHeightDragEnd,
+                      onCellWidthDragStart: onCellWidthDragStart,
                     );
                   },
                 ),

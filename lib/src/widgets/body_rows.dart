@@ -12,12 +12,22 @@ class FlutterSpreadsheetUIBodyRows extends StatelessWidget {
     required this.columns,
     required this.config,
     required this.scrollController,
+    required this.onCellHeightDrag,
+    required this.onCellHeightDragEnd,
+    required this.freezedCellWidth,
+    required this.selectedColumnIndex,
+    required this.selectedColumnWidth,
   }) : super(key: key);
 
   final List<FlutterSpreadsheetUIRow> rows;
   final List<FlutterSpreadsheetUIColumn> columns;
   final FlutterSpreadsheetUIConfig config;
   final ScrollController scrollController;
+  final Function(double updatedCellHeight, String cellId) onCellHeightDrag;
+  final Function(double updatedCellHeight, String cellId) onCellHeightDragEnd;
+  final double freezedCellWidth;
+  final int? selectedColumnIndex;
+  final double? selectedColumnWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -41,11 +51,11 @@ class FlutterSpreadsheetUIBodyRows extends StatelessWidget {
                   row: row,
                   column: columns.first,
                   cellHeight: row.height ?? config.cellHeight,
-                  cellWidth: config.freezedCellWidth ??
-                      columns.first.width ??
-                      config.cellWidth,
+                  cellWidth: freezedCellWidth,
                   columnIndex: columns.indexOf(columns.first),
                   borderDirection: BorderDirection.bottomLeftRight,
+                  onCellHeightDrag: onCellHeightDrag,
+                  onCellHeightDragEnd: onCellHeightDragEnd,
                 );
               },
             ).toList(),
@@ -85,10 +95,15 @@ class FlutterSpreadsheetUIBodyRows extends StatelessWidget {
                                   row: row,
                                   column: columns[columnIndex],
                                   cellHeight: row.height ?? config.cellHeight,
-                                  cellWidth: columns[columnIndex].width ??
-                                      config.cellWidth,
+                                  cellWidth: selectedColumnWidth != null &&
+                                          columnIndex == selectedColumnIndex
+                                      ? selectedColumnWidth!
+                                      : columns[columnIndex].width ??
+                                          config.cellWidth,
                                   columnIndex: columnIndex,
                                   borderDirection: BorderDirection.bottomRight,
+                                  onCellHeightDrag: onCellHeightDrag,
+                                  onCellHeightDragEnd: onCellHeightDragEnd,
                                 ),
                               )
                               .toList(),

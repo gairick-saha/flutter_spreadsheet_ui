@@ -8,6 +8,7 @@ class FlutterSpreadsheetUIConfig {
     this.headerHeight,
     this.onResizeColumnWidth,
     this.onResizeRowHeight,
+    this.customVerticalScrollViewBuilder,
   });
 
   final double cellWidth;
@@ -16,4 +17,5 @@ class FlutterSpreadsheetUIConfig {
   final double? headerHeight;
   final ValueChanged? onResizeColumnWidth;
   final ValueChanged? onResizeRowHeight;
+  final Widget Function(Widget tableBody)? customVerticalScrollViewBuilder;
 }
