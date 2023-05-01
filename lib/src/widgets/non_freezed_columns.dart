@@ -126,7 +126,7 @@ class _NonFreezedColumns extends StatelessWidget {
                       null;
 
                   return _BaseCell(
-                    onTap: null,
+                    onTap: row.cells[column.columnIndex].onCellPressed,
                     onTapDown: null,
                     onTapUp: null,
                     onTapCancel: null,
