@@ -1,4 +1,3 @@
-
 part of 'widgets.dart';
 
 class _TableHeader extends StatelessWidget {
@@ -11,16 +10,19 @@ class _TableHeader extends StatelessWidget {
       pinned: tableState.freezeFirstRow,
       delegate: _TableHeaderDelegate(
         headerHeight: tableState.tempHeaderHeight ?? tableState.headerHeight,
-        child: CustomScrollView(
-          controller: tableState.tableHeaderController,
-          scrollDirection: Axis.horizontal,
-          shrinkWrap: true,
-          clipBehavior: Clip.antiAliasWithSaveLayer,
-          scrollBehavior: const FlutterSpreadsheetUIScrollBehavior(),
-          slivers: const [
-            _FreezedColumn(isHeaderItem: true),
-            _NonFreezedColumns(isHeaderItem: true),
-          ],
+        child: Material(
+          elevation: 0,
+          child: CustomScrollView(
+            controller: tableState.tableHeaderController,
+            scrollDirection: Axis.horizontal,
+            shrinkWrap: true,
+            clipBehavior: Clip.antiAliasWithSaveLayer,
+            scrollBehavior: const FlutterSpreadsheetUIScrollBehavior(),
+            slivers: const [
+              _FreezedColumn(isHeaderItem: true),
+              _NonFreezedColumns(isHeaderItem: true),
+            ],
+          ),
         ),
       ),
     );
