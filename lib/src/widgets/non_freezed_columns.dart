@@ -60,28 +60,39 @@ class _NonFreezedColumns extends StatelessWidget {
               onFocusChanged: null,
               cellWidth: cellWidth,
               isSelected: isColumnResizing || isRowResizing || isColumnSelected,
+              alignment: column.contentAlignment,
+              padding: column.padding,
+              margin: column.margin,
+              borderWidth: 2.0,
               borderColor: null,
               selectionColor: null,
-              borderWidth: 2.0,
               borderDirection: BorderDirection.topBottomRight,
-              onCellWidthDragStart: () =>
-                  tableState.startColumnWidthResizeCallback(cellId),
-              onCellWidthDragEnd: () =>
-                  tableState.endColumnWidthResizeCallback(cellId),
-              onCellWidthDragUpdate: (DragUpdateDetails dragUpdateDetails) =>
-                  tableState.columnWidthResizeUpdateCallback(
-                cellId,
-                dragUpdateDetails,
-              ),
-              onCellHeightDragStart: () =>
-                  tableState.startRowHeightResizeCallback(cellId),
-              onCellHeightDragEnd: () =>
-                  tableState.endRowHeightResizeCallback(cellId),
-              onCellHeightDragUpdate: (DragUpdateDetails dragUpdateDetails) =>
-                  tableState.rowHeightResizeUpdateCallback(
-                cellId,
-                dragUpdateDetails,
-              ),
+              onCellWidthDragStart: !tableState.enableColumnWidthDrag
+                  ? null
+                  : () => tableState.startColumnWidthResizeCallback(cellId),
+              onCellWidthDragEnd: !tableState.enableColumnWidthDrag
+                  ? null
+                  : () => tableState.endColumnWidthResizeCallback(cellId),
+              onCellWidthDragUpdate: !tableState.enableColumnWidthDrag
+                  ? null
+                  : (DragUpdateDetails dragUpdateDetails) =>
+                      tableState.columnWidthResizeUpdateCallback(
+                        cellId,
+                        dragUpdateDetails,
+                      ),
+              onCellHeightDragStart: !tableState.enableRowHeightDrag
+                  ? null
+                  : () => tableState.startRowHeightResizeCallback(cellId),
+              onCellHeightDragEnd: !tableState.enableRowHeightDrag
+                  ? null
+                  : () => tableState.endRowHeightResizeCallback(cellId),
+              onCellHeightDragUpdate: !tableState.enableRowHeightDrag
+                  ? null
+                  : (DragUpdateDetails dragUpdateDetails) =>
+                      tableState.rowHeightResizeUpdateCallback(
+                        cellId,
+                        dragUpdateDetails,
+                      ),
               child: column.toWidget(
                 context,
                 cellId,
@@ -130,30 +141,40 @@ class _NonFreezedColumns extends StatelessWidget {
                         isRowResizing ||
                         isColumnSelected ||
                         isRowSelected,
+                    alignment: column.contentAlignment,
+                    padding: column.padding,
+                    margin: column.margin,
                     borderColor: null,
                     selectionColor: null,
                     borderWidth: 2.0,
                     borderDirection: BorderDirection.bottomRight,
-                    onCellWidthDragStart: () =>
-                        tableState.startColumnWidthResizeCallback(cellId),
-                    onCellWidthDragEnd: () =>
-                        tableState.endColumnWidthResizeCallback(cellId),
-                    onCellWidthDragUpdate:
-                        (DragUpdateDetails dragUpdateDetails) =>
+                    onCellWidthDragStart: !tableState.enableColumnWidthDrag
+                        ? null
+                        : () =>
+                            tableState.startColumnWidthResizeCallback(cellId),
+                    onCellWidthDragEnd: !tableState.enableColumnWidthDrag
+                        ? null
+                        : () => tableState.endColumnWidthResizeCallback(cellId),
+                    onCellWidthDragUpdate: !tableState.enableColumnWidthDrag
+                        ? null
+                        : (DragUpdateDetails dragUpdateDetails) =>
                             tableState.columnWidthResizeUpdateCallback(
-                      cellId,
-                      dragUpdateDetails,
-                    ),
-                    onCellHeightDragStart: () =>
-                        tableState.startRowHeightResizeCallback(cellId),
-                    onCellHeightDragEnd: () =>
-                        tableState.endRowHeightResizeCallback(cellId),
-                    onCellHeightDragUpdate:
-                        (DragUpdateDetails dragUpdateDetails) =>
+                              cellId,
+                              dragUpdateDetails,
+                            ),
+                    onCellHeightDragStart: !tableState.enableRowHeightDrag
+                        ? null
+                        : () => tableState.startRowHeightResizeCallback(cellId),
+                    onCellHeightDragEnd: !tableState.enableRowHeightDrag
+                        ? null
+                        : () => tableState.endRowHeightResizeCallback(cellId),
+                    onCellHeightDragUpdate: !tableState.enableRowHeightDrag
+                        ? null
+                        : (DragUpdateDetails dragUpdateDetails) =>
                             tableState.rowHeightResizeUpdateCallback(
-                      cellId,
-                      dragUpdateDetails,
-                    ),
+                              cellId,
+                              dragUpdateDetails,
+                            ),
                     child: row.cells[column.columnIndex].toWidget(
                       context,
                       cellId,
