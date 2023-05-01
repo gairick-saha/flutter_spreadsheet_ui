@@ -27,6 +27,8 @@ class _BaseCell extends StatelessWidget {
     this.onHighlightChanged,
     this.onHover,
     this.onFocusChanged,
+    this.padding = EdgeInsets.zero,
+    this.margin = EdgeInsets.zero,
   }) : super(key: key);
 
   final double? cellWidth, cellHeight;
@@ -50,6 +52,7 @@ class _BaseCell extends StatelessWidget {
   final GestureTapUpCallback? onTapUp;
   final GestureLongPressCallback? onLongPress;
   final ValueChanged<bool>? onHighlightChanged, onHover, onFocusChanged;
+  final EdgeInsetsGeometry? padding, margin;
 
   @override
   Widget build(BuildContext context) {
@@ -95,8 +98,8 @@ class _BaseCell extends StatelessWidget {
         height: cellHeight,
         duration: kThemeChangeDuration,
         alignment: alignment ?? Alignment.center,
-        padding: EdgeInsets.zero,
-        margin: EdgeInsets.zero,
+        padding: padding,
+        margin: margin,
         child: child,
       );
 
