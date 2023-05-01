@@ -1,112 +1,110 @@
-import 'package:flutter/material.dart';
+part of 'widgets.dart';
 
-enum BorderDirection {
-  topAndBottom,
-  topBottomRight,
-  topBottomLeftRight,
-  bottomLeftRight,
-  bottomRight,
-}
-
-class FlutterSpreadsheetUIBaseCell extends StatefulWidget {
-  const FlutterSpreadsheetUIBaseCell({
+class _BaseCell extends StatelessWidget {
+  const _BaseCell({
     Key? key,
-    required this.cellWidth,
-    required this.cellHeight,
+    this.cellWidth,
+    this.cellHeight,
     required this.child,
     required this.borderDirection,
+    required this.borderWidth,
     this.alignment,
-    this.borderWidth = 1.0,
+    this.borderColor,
+    this.selectionColor,
+    this.isSelected = false,
+    this.onCellWidthDragStart,
+    this.onCellWidthDragEnd,
+    this.onCellHeightDragStart,
+    this.onCellHeightDragEnd,
+    this.onCellWidthDragUpdate,
+    this.onCellHeightDragUpdate,
     this.onTap,
+    this.onTapDown,
+    this.onTapUp,
+    this.onTapCancel,
+    this.onDoubleTap,
+    this.onLongPress,
+    this.onHighlightChanged,
+    this.onHover,
     this.onFocusChanged,
-    required this.onCellWidthDragStart,
-    required this.onCellWidthDrag,
-    required this.onCellWidthDragEnd,
-    required this.onCellHeightDrag,
-    required this.onCellHeightDragEnd,
   }) : super(key: key);
 
-  final double cellWidth;
-  final double? cellHeight;
+  final double? cellWidth, cellHeight;
   final Widget? child;
-  final AlignmentGeometry? alignment;
   final BorderDirection borderDirection;
   final double borderWidth;
-  final VoidCallback? onTap;
-  final ValueChanged<bool>? onFocusChanged;
-  final VoidCallback? onCellWidthDragStart;
-  final Function(double updatedCellWidth)? onCellWidthDrag;
-  final Function(double updatedCellWidth)? onCellWidthDragEnd;
-  final Function(double updatedCellHeight) onCellHeightDrag;
-  final Function(double updatedCellHeight) onCellHeightDragEnd;
+  final AlignmentGeometry? alignment;
+  final Color? borderColor;
+  final Color? selectionColor;
+  final bool isSelected;
 
-  @override
-  State<FlutterSpreadsheetUIBaseCell> createState() =>
-      _FlutterSpreadsheetUIBaseCellState();
-}
+  final VoidCallback? onCellWidthDragStart,
+      onCellWidthDragEnd,
+      onCellHeightDragStart,
+      onCellHeightDragEnd;
+  final GestureDragUpdateCallback? onCellWidthDragUpdate,
+      onCellHeightDragUpdate;
 
-class _FlutterSpreadsheetUIBaseCellState
-    extends State<FlutterSpreadsheetUIBaseCell> {
-  late double cellWidth;
-
-  @override
-  void initState() {
-    super.initState();
-    cellWidth = widget.cellWidth;
-    setState(() {});
-  }
-
-  @override
-  void didUpdateWidget(FlutterSpreadsheetUIBaseCell oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.cellWidth != widget.cellWidth) {
-      cellWidth = widget.cellWidth;
-      setState(() {});
-    }
-  }
+  final GestureTapCallback? onTap, onTapCancel, onDoubleTap;
+  final GestureTapDownCallback? onTapDown;
+  final GestureTapUpCallback? onTapUp;
+  final GestureLongPressCallback? onLongPress;
+  final ValueChanged<bool>? onHighlightChanged, onHover, onFocusChanged;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: cellWidth.isNegative ? 0 : cellWidth,
-      height: widget.cellHeight,
+      width: cellWidth,
+      height: cellHeight,
       child: InkWell(
-        onTap: widget.onTap,
-        onFocusChange: widget.onFocusChanged,
+        onTap: onTap,
+        onTapDown: onTapDown,
+        onTapUp: onTapUp,
+        onTapCancel: onTapCancel,
+        onDoubleTap: onDoubleTap,
+        onLongPress: onLongPress,
+        onHighlightChanged: onHighlightChanged,
+        onHover: onHover,
+        onFocusChange: onFocusChanged,
         child: Stack(
           fit: StackFit.expand,
-          alignment: widget.alignment ?? Alignment.center,
+          alignment: alignment ?? Alignment.center,
           clipBehavior: Clip.antiAliasWithSaveLayer,
           children: [
-            ..._buildBorders(context),
             Positioned.fill(
               top: 0,
               bottom: 0,
               left: 0,
               right: 0,
-              child: _buildContent(),
+              child: _buildContent(context),
             ),
+            ..._buildBorders(context),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildContent() => AnimatedContainer(
-        width: cellWidth.isNegative ? 0 : cellWidth,
-        height: widget.cellHeight,
+  Widget _buildContent(BuildContext context) => AnimatedContainer(
+        decoration: BoxDecoration(
+          color: isSelected
+              ? (selectionColor ?? Theme.of(context).highlightColor)
+              : Theme.of(context).canvasColor,
+        ),
+        width: cellWidth,
+        height: cellHeight,
         duration: kThemeChangeDuration,
-        alignment: widget.alignment,
+        alignment: alignment ?? Alignment.center,
         padding: EdgeInsets.zero,
         margin: EdgeInsets.zero,
-        child: widget.child,
+        child: child,
       );
 
   List<Widget> _buildBorders(BuildContext context) {
-    late List<Widget> borders;
+    List<Widget> borders = [];
 
-    switch (widget.borderDirection) {
-      case BorderDirection.topAndBottom:
+    switch (borderDirection) {
+      case BorderDirection.topBottomLeftRight:
         borders = [
           Positioned(
             top: 0,
@@ -119,7 +117,41 @@ class _FlutterSpreadsheetUIBaseCellState
             left: 0,
             right: 0,
             child: _buildBottomBorder(context),
-          )
+          ),
+          Positioned(
+            top: 0,
+            bottom: 0,
+            left: 0,
+            child: _buildLeftBorder(context),
+          ),
+          Positioned(
+            top: 0,
+            bottom: 0,
+            right: 0,
+            child: _buildRightBorder(context),
+          ),
+        ];
+        break;
+      case BorderDirection.bottomLeftRight:
+        borders = [
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: _buildBottomBorder(context),
+          ),
+          Positioned(
+            top: 0,
+            bottom: 0,
+            left: 0,
+            child: _buildLeftBorder(context),
+          ),
+          Positioned(
+            top: 0,
+            bottom: 0,
+            right: 0,
+            child: _buildRightBorder(context),
+          ),
         ];
         break;
       case BorderDirection.topBottomRight:
@@ -144,28 +176,6 @@ class _FlutterSpreadsheetUIBaseCellState
           ),
         ];
         break;
-      case BorderDirection.bottomLeftRight:
-        borders = [
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: _buildBottomBorder(context),
-          ),
-          Positioned(
-            top: 0,
-            bottom: 0,
-            right: 0,
-            child: _buildRightBorder(context),
-          ),
-          Positioned(
-            top: 0,
-            bottom: 0,
-            left: 0,
-            child: _buildLeftBorder(context),
-          ),
-        ];
-        break;
       case BorderDirection.bottomRight:
         borders = [
           Positioned(
@@ -182,34 +192,6 @@ class _FlutterSpreadsheetUIBaseCellState
           ),
         ];
         break;
-      case BorderDirection.topBottomLeftRight:
-        borders = [
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: _buildTopBorder(context),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: _buildBottomBorder(context),
-          ),
-          Positioned(
-            top: 0,
-            bottom: 0,
-            right: 0,
-            child: _buildRightBorder(context),
-          ),
-          Positioned(
-            top: 0,
-            bottom: 0,
-            left: 0,
-            child: _buildLeftBorder(context),
-          ),
-        ];
-        break;
     }
 
     return borders;
@@ -219,36 +201,52 @@ class _FlutterSpreadsheetUIBaseCellState
         decoration: BoxDecoration(
           border: Border(
             top: Divider.createBorderSide(context).copyWith(
-              width: widget.borderWidth,
+              width: borderWidth,
             ),
           ),
         ),
         child: const SizedBox(
-          height: 2.0,
+          height: 5.0,
         ),
       );
 
-  Widget _buildBottomBorder(BuildContext context) => MouseRegion(
-        cursor: SystemMouseCursors.resizeRow,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: Divider.createBorderSide(context).copyWith(
-                width: widget.borderWidth,
-              ),
-            ),
-          ),
-          child: const SizedBox(
-            height: 2.0,
+  Widget _buildBottomBorder(BuildContext context) {
+    final Widget child = DecoratedBox(
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: Divider.createBorderSide(context).copyWith(
+            width: borderWidth,
           ),
         ),
-      );
+      ),
+      child: const SizedBox(
+        height: 5.0,
+      ),
+    );
+
+    if (onCellHeightDragUpdate == null) {
+      return child;
+    }
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.resizeRow,
+      child: GestureDetector(
+        onVerticalDragStart: onCellHeightDragStart == null
+            ? null
+            : (_) => onCellHeightDragStart!(),
+        onVerticalDragEnd:
+            onCellHeightDragEnd == null ? null : (_) => onCellHeightDragEnd!(),
+        onVerticalDragUpdate: onCellHeightDragUpdate,
+        child: child,
+      ),
+    );
+  }
 
   Widget _buildLeftBorder(BuildContext context) => DecoratedBox(
         decoration: BoxDecoration(
           border: Border(
             left: Divider.createBorderSide(context).copyWith(
-              width: widget.borderWidth,
+              width: borderWidth,
             ),
           ),
         ),
@@ -259,43 +257,30 @@ class _FlutterSpreadsheetUIBaseCellState
       decoration: BoxDecoration(
         border: Border(
           right: Divider.createBorderSide(context).copyWith(
-            width: widget.borderWidth,
+            width: borderWidth,
           ),
         ),
       ),
       child: const SizedBox(
-        width: 2.0,
+        width: 5.0,
       ),
     );
 
-    if (widget.onCellWidthDrag == null) {
+    if (onCellWidthDragUpdate == null) {
       return child;
     }
 
     return MouseRegion(
       cursor: SystemMouseCursors.resizeColumn,
       child: GestureDetector(
-        onHorizontalDragUpdate:
-            widget.onCellWidthDrag == null ? null : _resizeColumn,
-        onHorizontalDragStart: (_) => widget.onCellWidthDragStart == null
+        onHorizontalDragStart: onCellWidthDragStart == null
             ? null
-            : widget.onCellWidthDragStart!(),
-        onHorizontalDragEnd: (_) {
-          if (widget.onCellWidthDragEnd != null) {
-            cellWidth = widget.cellWidth;
-            widget.onCellWidthDragEnd!(cellWidth);
-          }
-          setState(() {});
-        },
+            : (_) => onCellWidthDragStart!(),
+        onHorizontalDragEnd:
+            onCellWidthDragEnd == null ? null : (_) => onCellWidthDragEnd!(),
+        onHorizontalDragUpdate: onCellWidthDragUpdate,
         child: child,
       ),
     );
-  }
-
-  void _resizeColumn(DragUpdateDetails dragDetails) {
-    double width = widget.cellWidth + dragDetails.localPosition.dx;
-    cellWidth = width;
-    widget.onCellWidthDrag!(width);
-    setState(() {});
   }
 }

@@ -9,6 +9,12 @@ class FlutterSpreadsheetUIRow {
   final double? height;
   final List<FlutterSpreadsheetUICell> cells;
 
+  late int _rowIndex;
+
+  int get rowIndex => _rowIndex;
+
+  void setRowIndex(int rowIndex) => _rowIndex = rowIndex;
+
   FlutterSpreadsheetUIRow copyWith({
     double? height,
     List<FlutterSpreadsheetUICell>? cells,

@@ -4,18 +4,14 @@ class FlutterSpreadsheetUIConfig {
   const FlutterSpreadsheetUIConfig({
     this.cellWidth = 100,
     this.cellHeight = kMinInteractiveDimension,
-    this.freezedCellWidth,
+    this.freezedColumnWidth,
     this.headerHeight,
-    this.onResizeColumnWidth,
-    this.onResizeRowHeight,
-    this.customVerticalScrollViewBuilder,
+    this.freezedColumnExtendedByWidth = 50,
+    this.freezeFirstColumn = true,
+    this.freezeFirstRow = true,
   });
 
-  final double cellWidth;
-  final double cellHeight;
-  final double? freezedCellWidth;
-  final double? headerHeight;
-  final ValueChanged? onResizeColumnWidth;
-  final ValueChanged? onResizeRowHeight;
-  final Widget Function(Widget tableBody)? customVerticalScrollViewBuilder;
+  final double cellWidth, cellHeight, freezedColumnExtendedByWidth;
+  final double? freezedColumnWidth, headerHeight;
+  final bool freezeFirstColumn, freezeFirstRow;
 }

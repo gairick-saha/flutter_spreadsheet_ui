@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../flutter_spreadsheet_ui.dart';
+import '../../../flutter_spreadsheet_ui.dart';
 
 class FlutterSpreadsheetUICell {
   FlutterSpreadsheetUICell({
