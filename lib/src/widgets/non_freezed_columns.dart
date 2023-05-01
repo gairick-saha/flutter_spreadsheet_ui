@@ -63,9 +63,9 @@ class _NonFreezedColumns extends StatelessWidget {
               alignment: column.contentAlignment,
               padding: column.padding,
               margin: column.margin,
-              borderWidth: 2.0,
-              borderColor: null,
-              selectionColor: null,
+              borderWidth: tableState.borderWidth,
+              borderColor: tableState.borderColor,
+              selectionColor: tableState.selectionColor,
               borderDirection: BorderDirection.topBottomRight,
               onCellWidthDragStart: !tableState.enableColumnWidthDrag
                   ? null
@@ -144,9 +144,9 @@ class _NonFreezedColumns extends StatelessWidget {
                     alignment: column.contentAlignment,
                     padding: column.padding,
                     margin: column.margin,
-                    borderColor: null,
-                    selectionColor: null,
-                    borderWidth: 2.0,
+                    borderWidth: tableState.borderWidth,
+                    borderColor: tableState.borderColor,
+                    selectionColor: tableState.selectionColor,
                     borderDirection: BorderDirection.bottomRight,
                     onCellWidthDragStart: !tableState.enableColumnWidthDrag
                         ? null

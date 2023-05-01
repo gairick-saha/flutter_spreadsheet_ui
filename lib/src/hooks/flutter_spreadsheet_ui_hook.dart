@@ -126,6 +126,9 @@ class _FlutterSpreadsheetUIHookState
       rowHeightResizeUpdateCallback: rowHeightResizeUpdateCallback,
       enableColumnWidthDrag: hook.config.enableColumnWidthDrag,
       enableRowHeightDrag: hook.config.enableRowHeightDrag,
+      borderWidth: hook.config.borderWidth,
+      borderColor: hook.config.borderColor,
+      selectionColor: hook.config.selectionColor,
     );
 
     _horizontalControllers
@@ -162,7 +165,10 @@ class _FlutterSpreadsheetUIHookState
         oldHook.config.freezeFirstRow != hook.config.freezeFirstRow ||
         oldHook.config.enableColumnWidthDrag !=
             hook.config.enableColumnWidthDrag ||
-        oldHook.config.enableRowHeightDrag != hook.config.enableRowHeightDrag) {
+        oldHook.config.enableRowHeightDrag != hook.config.enableRowHeightDrag ||
+        oldHook.config.borderWidth != hook.config.borderWidth ||
+        oldHook.config.borderColor != hook.config.borderColor ||
+        oldHook.config.selectionColor != hook.config.selectionColor) {
       _allColumns = _getColumns();
       _allRows = _getRows();
 
@@ -191,6 +197,9 @@ class _FlutterSpreadsheetUIHookState
         showFreezedColumnElevation: _showFreezedColumnElevation,
         enableColumnWidthDrag: hook.config.enableColumnWidthDrag,
         enableRowHeightDrag: hook.config.enableRowHeightDrag,
+        borderWidth: hook.config.borderWidth,
+        borderColor: hook.config.borderColor,
+        selectionColor: hook.config.selectionColor,
         forceUpdate: true,
       );
     }

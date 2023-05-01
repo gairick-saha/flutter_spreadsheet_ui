@@ -11,12 +11,16 @@ class FlutterSpreadsheetUIConfig {
     this.freezeFirstRow = true,
     this.enableColumnWidthDrag = false,
     this.enableRowHeightDrag = false,
+    this.borderWidth = 1.5,
+    this.borderColor,
+    this.selectionColor,
   });
 
-  final double cellWidth, cellHeight, freezedColumnExtendedByWidth;
+  final double cellWidth, cellHeight, freezedColumnExtendedByWidth, borderWidth;
   final double? freezedColumnWidth, headerHeight;
   final bool freezeFirstColumn,
       freezeFirstRow,
       enableColumnWidthDrag,
       enableRowHeightDrag;
+  final Color? borderColor, selectionColor;
 }

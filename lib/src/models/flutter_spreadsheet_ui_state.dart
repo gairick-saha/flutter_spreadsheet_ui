@@ -36,6 +36,9 @@ class FlutterSpreadsheetUIState {
     required this.rowSelectionCallback,
     required this.enableColumnWidthDrag,
     required this.enableRowHeightDrag,
+    required this.borderWidth,
+    required this.borderColor,
+    required this.selectionColor,
   });
 
   final ScrollController tableHeaderController,
@@ -47,7 +50,8 @@ class FlutterSpreadsheetUIState {
       freezedColumnWidth,
       freezedColumnExtendedByWidth,
       defaultColumnWidth,
-      defaultRowHeight;
+      defaultRowHeight,
+      borderWidth;
   final double? tempHeaderHeight,
       tempFreezedColumnWidth,
       selectedTempColumnWidth,
@@ -66,6 +70,7 @@ class FlutterSpreadsheetUIState {
   final RowHeightResizeUpdateCallback rowHeightResizeUpdateCallback;
   final FlutterSpreadsheetUIColumnSelectionCallback columnSelectionCallback;
   final FlutterSpreadsheetUIRowSelectionCallback rowSelectionCallback;
+  final Color? borderColor, selectionColor;
 
   FlutterSpreadsheetUIState copyWith({
     List<FlutterSpreadsheetUIColumn>? columns,
@@ -88,6 +93,9 @@ class FlutterSpreadsheetUIState {
     int? selectedRowIndexForResizing,
     bool? enableColumnWidthDrag,
     bool? enableRowHeightDrag,
+    double? borderWidth,
+    Color? borderColor,
+    Color? selectionColor,
     bool forceUpdate = false,
   }) =>
       FlutterSpreadsheetUIState(
@@ -130,6 +138,9 @@ class FlutterSpreadsheetUIState {
             : selectedTempRowHeight ?? this.selectedTempRowHeight,
         showFreezedColumnElevation:
             showFreezedColumnElevation ?? this.showFreezedColumnElevation,
+        borderWidth: borderWidth ?? this.borderWidth,
+        borderColor: borderColor ?? this.borderColor,
+        selectionColor: selectionColor ?? this.selectionColor,
         startColumnWidthResizeCallback: startColumnWidthResizeCallback,
         endColumnWidthResizeCallback: endColumnWidthResizeCallback,
         columnWidthResizeUpdateCallback: columnWidthResizeUpdateCallback,

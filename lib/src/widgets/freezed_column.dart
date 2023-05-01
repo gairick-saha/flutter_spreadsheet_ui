@@ -69,9 +69,9 @@ class _FreezedColumn extends StatelessWidget {
         alignment: column.contentAlignment,
         padding: column.padding,
         margin: column.margin,
-        borderWidth: 2.0,
-        borderColor: null,
-        selectionColor: null,
+        borderWidth: tableState.borderWidth,
+        borderColor: tableState.borderColor,
+        selectionColor: tableState.selectionColor,
         borderDirection: BorderDirection.topBottomLeftRight,
         onCellWidthDragStart: !tableState.enableColumnWidthDrag
             ? null
@@ -155,9 +155,9 @@ class _FreezedColumn extends StatelessWidget {
               padding: column.padding,
               margin: column.margin,
               cellHeight: cellHeight,
-              borderWidth: 2.0,
-              borderColor: null,
-              selectionColor: null,
+              borderWidth: tableState.borderWidth,
+              borderColor: tableState.borderColor,
+              selectionColor: tableState.selectionColor,
               borderDirection: BorderDirection.bottomLeftRight,
               onCellWidthDragStart: !tableState.enableColumnWidthDrag
                   ? null
