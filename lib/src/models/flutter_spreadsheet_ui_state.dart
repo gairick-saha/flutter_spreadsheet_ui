@@ -34,6 +34,8 @@ class FlutterSpreadsheetUIState {
     required this.rowHeightResizeUpdateCallback,
     required this.columnSelectionCallback,
     required this.rowSelectionCallback,
+    required this.enableColumnWidthDrag,
+    required this.enableRowHeightDrag,
   });
 
   final ScrollController tableHeaderController,
@@ -50,7 +52,11 @@ class FlutterSpreadsheetUIState {
       tempFreezedColumnWidth,
       selectedTempColumnWidth,
       selectedTempRowHeight;
-  final bool freezeFirstColumn, freezeFirstRow, showFreezedColumnElevation;
+  final bool freezeFirstColumn,
+      freezeFirstRow,
+      showFreezedColumnElevation,
+      enableColumnWidthDrag,
+      enableRowHeightDrag;
   final int? selectedColumnIndexForResizing, selectedRowIndexForResizing;
   final StartColumnWidthResizeCallback startColumnWidthResizeCallback;
   final EndColumnWidthResizeCallback endColumnWidthResizeCallback;
@@ -80,9 +86,14 @@ class FlutterSpreadsheetUIState {
     bool? showFreezedColumnElevation,
     int? selectedColumnIndexForResizing,
     int? selectedRowIndexForResizing,
+    bool? enableColumnWidthDrag,
+    bool? enableRowHeightDrag,
     bool forceUpdate = false,
   }) =>
       FlutterSpreadsheetUIState(
+        enableColumnWidthDrag:
+            enableColumnWidthDrag ?? this.enableColumnWidthDrag,
+        enableRowHeightDrag: enableRowHeightDrag ?? this.enableRowHeightDrag,
         tableHeaderController: tableHeaderController,
         tableBodyController: tableBodyController,
         verticalScrollController: verticalScrollController,
