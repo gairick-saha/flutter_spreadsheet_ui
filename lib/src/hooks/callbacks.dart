@@ -1,6 +1,6 @@
-import 'package:flutter/gestures.dart';
+part of 'flutter_spreadsheet_ui_hook.dart';
 
-mixin FlutterSpreadsheetUICellDragCallbacks {
+mixin _FlutterSpreadsheetUICellDragCallbacks {
   void listenHorizontalScrollOffsetChange();
 
   void startColumnWidthResizeCallback(String cellId);
