@@ -27,6 +27,8 @@ class FlutterSpreadsheetUI extends HookWidget {
     required this.columns,
     required this.rows,
     this.config = const FlutterSpreadsheetUIConfig(),
+    this.columnWidthResizeCallback,
+    this.rowHeightResizeCallback,
   })  : assert(
           columns.isNotEmpty,
           'minimum 1 column need to be specified',
@@ -46,6 +48,9 @@ class FlutterSpreadsheetUI extends HookWidget {
   final List<FlutterSpreadsheetUIColumn> columns;
   final List<FlutterSpreadsheetUIRow> rows;
   final FlutterSpreadsheetUIConfig config;
+  final FlutterSpreadsheetUIColumnWidthResizeCallback?
+      columnWidthResizeCallback;
+  final FlutterSpreadsheetUIRowHeightResizeCallback? rowHeightResizeCallback;
 
   static FlutterSpreadsheetUIState of(BuildContext context) => context
       .dependOnInheritedWidgetOfExactType<_InheritedFlutterSpreadsheetUI>()!
@@ -64,6 +69,8 @@ class FlutterSpreadsheetUI extends HookWidget {
         columns: columns,
         rows: rows,
         config: config,
+        columnWidthResizeCallback: columnWidthResizeCallback,
+        rowHeightResizeCallback: rowHeightResizeCallback,
       ),
       child: Builder(
         builder: (context) {

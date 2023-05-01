@@ -12,3 +12,13 @@ typedef FlutterSpreadsheetUICellBuilder = Widget? Function(
   BuildContext context,
   String cellId,
 );
+
+typedef FlutterSpreadsheetUIColumnWidthResizeCallback = void Function(
+  int columnIndex,
+  double updatedWidth,
+);
+
+typedef FlutterSpreadsheetUIRowHeightResizeCallback = void Function(
+  int rowIndex,
+  double updatedHeight,
+);
