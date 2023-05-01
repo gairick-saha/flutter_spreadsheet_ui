@@ -41,12 +41,6 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Padding(
         padding: const EdgeInsets.all(6.0),
         child: FlutterSpreadsheetUI(
-          columnWidthResizeCallback: (int columnIndex, double updatedWidth) {
-            log("Column: $columnIndex's updated width: $updatedWidth");
-          },
-          rowHeightResizeCallback: (int rowIndex, double updatedHeight) {
-            log("Row: $rowIndex's updated height: $updatedHeight");
-          },
           config: const FlutterSpreadsheetUIConfig(
             enableColumnWidthDrag: true,
             enableRowHeightDrag: true,
@@ -54,20 +48,26 @@ class _MyHomePageState extends State<MyHomePage> {
             freezeFirstColumn: true,
             freezeFirstRow: true,
           ),
+          columnWidthResizeCallback: (int columnIndex, double updatedWidth) {
+            log("Column: $columnIndex's updated width: $updatedWidth");
+          },
+          rowHeightResizeCallback: (int rowIndex, double updatedHeight) {
+            log("Row: $rowIndex's updated height: $updatedHeight");
+          },
           columns: [
-            FlutterSpreadsheetUIColumn(
-              contentAlignment: Alignment.center,
-              cellBuilder: (context, cellId) => const Text("Task"),
-            ),
-            FlutterSpreadsheetUIColumn(
-              width: 200,
-              contentAlignment: Alignment.center,
-              cellBuilder: (context, cellId) => const Text("Assigned Date"),
-            ),
-            FlutterSpreadsheetUIColumn(
-              width: 110,
-              cellBuilder: (context, cellId) => const Text("Permissions"),
-            ),
+            // FlutterSpreadsheetUIColumn(
+            //   contentAlignment: Alignment.center,
+            //   cellBuilder: (context, cellId) => const Text("Task"),
+            // ),
+            // FlutterSpreadsheetUIColumn(
+            //   width: 200,
+            //   contentAlignment: Alignment.center,
+            //   cellBuilder: (context, cellId) => const Text("Assigned Date"),
+            // ),
+            // FlutterSpreadsheetUIColumn(
+            //   width: 110,
+            //   cellBuilder: (context, cellId) => const Text("Permissions"),
+            // ),
             ...List.generate(
               10,
               (index) => FlutterSpreadsheetUIColumn(
@@ -80,20 +80,20 @@ class _MyHomePageState extends State<MyHomePage> {
             20,
             (rowIndex) => FlutterSpreadsheetUIRow(
               cells: [
-                FlutterSpreadsheetUICell(
-                  cellBuilder: (context, cellId) =>
-                      Text('Task ${rowIndex + 1}'),
-                ),
-                FlutterSpreadsheetUICell(
-                  cellBuilder: (context, cellId) => Text(
-                    DateTime.now().toString(),
-                  ),
-                ),
-                FlutterSpreadsheetUICell(
-                  cellBuilder: (context, cellId) => const Text(
-                    'None',
-                  ),
-                ),
+                // FlutterSpreadsheetUICell(
+                //   cellBuilder: (context, cellId) =>
+                //       Text('Task ${rowIndex + 1}'),
+                // ),
+                // FlutterSpreadsheetUICell(
+                //   cellBuilder: (context, cellId) => Text(
+                //     DateTime.now().toString(),
+                //   ),
+                // ),
+                // FlutterSpreadsheetUICell(
+                //   cellBuilder: (context, cellId) => const Text(
+                //     'None',
+                //   ),
+                // ),
                 ...List.generate(
                   10,
                   (colIndex) => FlutterSpreadsheetUICell(
