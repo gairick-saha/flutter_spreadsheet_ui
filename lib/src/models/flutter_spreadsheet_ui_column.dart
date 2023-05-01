@@ -8,12 +8,16 @@ class FlutterSpreadsheetUIColumn {
     this.width,
     this.contentAlignment,
     this.onCellPressed,
+    this.padding,
+    this.margin,
   });
 
   final FlutterSpreadsheetUICellBuilder cellBuilder;
   final double? width;
   final Alignment? contentAlignment;
   final VoidCallback? onCellPressed;
+  final EdgeInsetsGeometry? padding;
+  final EdgeInsetsGeometry? margin;
 
   late int _columnIndex;
 
