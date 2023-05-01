@@ -5,18 +5,24 @@ import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 
 import '../../flutter_spreadsheet_ui.dart';
 import '../models/flutter_spreadsheet_ui_state.dart';
-import 'callbacks.dart';
+
+part 'callbacks.dart';
 
 FlutterSpreadsheetUIState useFlutterSpreadsheetUIState({
   required List<FlutterSpreadsheetUIColumn> columns,
   required List<FlutterSpreadsheetUIRow> rows,
   required FlutterSpreadsheetUIConfig config,
+  required FlutterSpreadsheetUIColumnWidthResizeCallback?
+      columnWidthResizeCallback,
+  required FlutterSpreadsheetUIRowHeightResizeCallback? rowHeightResizeCallback,
 }) =>
     use<FlutterSpreadsheetUIState>(
       _FlutterSpreadsheetUIHook(
         columns: columns,
         rows: rows,
         config: config,
+        columnWidthResizeCallback: columnWidthResizeCallback,
+        rowHeightResizeCallback: rowHeightResizeCallback,
       ),
     );
 
@@ -25,11 +31,16 @@ class _FlutterSpreadsheetUIHook extends Hook<FlutterSpreadsheetUIState> {
     required this.columns,
     required this.rows,
     required this.config,
+    required this.columnWidthResizeCallback,
+    required this.rowHeightResizeCallback,
   });
 
   final List<FlutterSpreadsheetUIColumn> columns;
   final List<FlutterSpreadsheetUIRow> rows;
   final FlutterSpreadsheetUIConfig config;
+  final FlutterSpreadsheetUIColumnWidthResizeCallback?
+      columnWidthResizeCallback;
+  final FlutterSpreadsheetUIRowHeightResizeCallback? rowHeightResizeCallback;
 
   @override
   HookState<FlutterSpreadsheetUIState, Hook<FlutterSpreadsheetUIState>>
@@ -38,19 +49,21 @@ class _FlutterSpreadsheetUIHook extends Hook<FlutterSpreadsheetUIState> {
 
 class _FlutterSpreadsheetUIHookState
     extends HookState<FlutterSpreadsheetUIState, _FlutterSpreadsheetUIHook>
-    with FlutterSpreadsheetUICellDragCallbacks {
+    with _FlutterSpreadsheetUICellDragCallbacks {
   late LinkedScrollControllerGroup _horizontalControllers;
   late FlutterSpreadsheetUIState spreadsheetUIState;
 
   List<FlutterSpreadsheetUIColumn> _allColumns = [];
-  final List<FlutterSpreadsheetUIColumn> _selectedColumns = [];
   List<FlutterSpreadsheetUIRow> _allRows = [];
+
+  final List<FlutterSpreadsheetUIColumn> _selectedColumns = [];
   final List<FlutterSpreadsheetUIRow> _selectedRows = [];
 
   FlutterSpreadsheetUIColumn? _selectedColumnForResizing;
   FlutterSpreadsheetUIRow? _selectedRowForResizing;
 
   late double _headerHeight, _freezedColumnWidth;
+
   double? _tempHeaderHeight,
       _tempFreezedColumnWidth,
       _selectedTempColumnWidth,
@@ -103,14 +116,16 @@ class _FlutterSpreadsheetUIHookState
       selectedColumnIndexForResizing: _selectedColumnIndexForResizing,
       selectedRowIndexForResizing: _selectedRowIndexForResizing,
       showFreezedColumnElevation: _showFreezedColumnElevation,
+      columnSelectionCallback: selectColumn,
+      rowSelectionCallback: selectRow,
       startColumnWidthResizeCallback: startColumnWidthResizeCallback,
       endColumnWidthResizeCallback: endColumnWidthResizeCallback,
       columnWidthResizeUpdateCallback: columnWidthResizeUpdateCallback,
       startRowHeightResizeCallback: startRowHeightResizeCallback,
       endRowHeightResizeCallback: endRowHeightResizeCallback,
       rowHeightResizeUpdateCallback: rowHeightResizeUpdateCallback,
-      columnSelectionCallback: selectColumn,
-      rowSelectionCallback: selectRow,
+      enableColumnWidthDrag: hook.config.enableColumnWidthDrag,
+      enableRowHeightDrag: hook.config.enableRowHeightDrag,
     );
 
     _horizontalControllers
@@ -134,6 +149,69 @@ class _FlutterSpreadsheetUIHookState
   }
 
   @override
+  void didUpdateHook(_FlutterSpreadsheetUIHook oldHook) {
+    if (oldHook.columns != hook.columns ||
+        oldHook.rows != hook.rows ||
+        oldHook.config.freezedColumnWidth != hook.config.freezedColumnWidth ||
+        oldHook.config.headerHeight != hook.config.headerHeight ||
+        oldHook.config.cellWidth != hook.config.cellWidth ||
+        oldHook.config.cellHeight != hook.config.cellHeight ||
+        oldHook.config.freezedColumnExtendedByWidth !=
+            hook.config.freezedColumnExtendedByWidth ||
+        oldHook.config.freezeFirstColumn != hook.config.freezeFirstColumn ||
+        oldHook.config.freezeFirstRow != hook.config.freezeFirstRow ||
+        oldHook.config.enableColumnWidthDrag !=
+            hook.config.enableColumnWidthDrag ||
+        oldHook.config.enableRowHeightDrag != hook.config.enableRowHeightDrag) {
+      _allColumns = _getColumns();
+      _allRows = _getRows();
+
+      _headerHeight = hook.config.headerHeight ?? hook.config.cellHeight;
+      _freezedColumnWidth = hook.config.freezedColumnWidth ??
+          _allColumns.first.width ??
+          hook.config.cellWidth;
+
+      spreadsheetUIState = spreadsheetUIState.copyWith(
+        columns: _allColumns,
+        selectedColumns: _selectedColumns,
+        selectedRows: _selectedRows,
+        rows: _allRows,
+        headerHeight: _headerHeight,
+        tempHeaderHeight: _tempHeaderHeight,
+        freezedColumnWidth: _freezedColumnWidth,
+        tempFreezedColumnWidth: _tempFreezedColumnWidth,
+        selectedTempRowHeight: _selectedTempRowHeight,
+        defaultColumnWidth: hook.config.cellWidth,
+        defaultRowHeight: hook.config.cellHeight,
+        freezedColumnExtendedByWidth: hook.config.freezedColumnExtendedByWidth,
+        freezeFirstColumn: hook.config.freezeFirstColumn,
+        freezeFirstRow: hook.config.freezeFirstRow,
+        selectedColumnIndexForResizing: _selectedColumnIndexForResizing,
+        selectedRowIndexForResizing: _selectedRowIndexForResizing,
+        showFreezedColumnElevation: _showFreezedColumnElevation,
+        enableColumnWidthDrag: hook.config.enableColumnWidthDrag,
+        enableRowHeightDrag: hook.config.enableRowHeightDrag,
+        forceUpdate: true,
+      );
+    }
+    setState(() {});
+    super.didUpdateHook(oldHook);
+  }
+
+  @override
+  void dispose() {
+    _horizontalControllers
+        .removeOffsetChangedListener(listenHorizontalScrollOffsetChange);
+    spreadsheetUIState.tableHeaderController.dispose();
+    spreadsheetUIState.tableBodyController.dispose();
+    spreadsheetUIState.verticalScrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  FlutterSpreadsheetUIState build(BuildContext context) => spreadsheetUIState;
+
+  @override
   void startColumnWidthResizeCallback(String cellId) {
     int columnIndex = FlutterSpreadsheetUI.getColumnIndexFromCellId(cellId);
     _selectedColumnIndexForResizing = columnIndex;
@@ -149,6 +227,20 @@ class _FlutterSpreadsheetUIHookState
 
   @override
   void endColumnWidthResizeCallback(String cellId) {
+    if (hook.columnWidthResizeCallback != null) {
+      if (_selectedColumnIndexForResizing == 0) {
+        hook.columnWidthResizeCallback!(
+          _selectedColumnIndexForResizing!,
+          _tempFreezedColumnWidth!,
+        );
+      } else {
+        hook.columnWidthResizeCallback!(
+          _selectedColumnIndexForResizing!,
+          _selectedTempColumnWidth!,
+        );
+      }
+    }
+
     _selectedColumnForResizing = null;
     _selectedColumnIndexForResizing = null;
     _tempFreezedColumnWidth = null;
@@ -205,6 +297,20 @@ class _FlutterSpreadsheetUIHookState
 
   @override
   void endRowHeightResizeCallback(String cellId) {
+    if (hook.rowHeightResizeCallback != null) {
+      if (_selectedRowIndexForResizing == 0) {
+        hook.rowHeightResizeCallback!(
+          _selectedRowIndexForResizing!,
+          _tempHeaderHeight!,
+        );
+      } else {
+        hook.rowHeightResizeCallback!(
+          _selectedRowIndexForResizing!,
+          _selectedTempRowHeight!,
+        );
+      }
+    }
+
     _selectedRowForResizing = null;
     _selectedRowIndexForResizing = null;
     _selectedTempRowHeight = null;
@@ -282,61 +388,4 @@ class _FlutterSpreadsheetUIHookState
     );
     setState(() {});
   }
-
-  @override
-  void didUpdateHook(_FlutterSpreadsheetUIHook oldHook) {
-    if (oldHook.columns != hook.columns ||
-        oldHook.rows != hook.rows ||
-        oldHook.config.freezedColumnWidth != hook.config.freezedColumnWidth ||
-        oldHook.config.headerHeight != hook.config.headerHeight ||
-        oldHook.config.cellWidth != hook.config.cellWidth ||
-        oldHook.config.cellHeight != hook.config.cellHeight ||
-        oldHook.config.freezedColumnExtendedByWidth !=
-            hook.config.freezedColumnExtendedByWidth ||
-        oldHook.config.freezeFirstColumn != hook.config.freezeFirstColumn ||
-        oldHook.config.freezeFirstRow != hook.config.freezeFirstRow) {
-      _allColumns = _getColumns();
-      _allRows = _getRows();
-
-      _headerHeight = hook.config.headerHeight ?? hook.config.cellHeight;
-      _freezedColumnWidth = hook.config.freezedColumnWidth ??
-          _allColumns.first.width ??
-          hook.config.cellWidth;
-
-      spreadsheetUIState = spreadsheetUIState.copyWith(
-        columns: _allColumns,
-        selectedColumns: _selectedColumns,
-        selectedRows: _selectedRows,
-        rows: _allRows,
-        headerHeight: _headerHeight,
-        tempHeaderHeight: _tempHeaderHeight,
-        freezedColumnWidth: _freezedColumnWidth,
-        tempFreezedColumnWidth: _tempFreezedColumnWidth,
-        selectedTempRowHeight: _selectedTempRowHeight,
-        defaultColumnWidth: hook.config.cellWidth,
-        defaultRowHeight: hook.config.cellHeight,
-        freezedColumnExtendedByWidth: hook.config.freezedColumnExtendedByWidth,
-        freezeFirstColumn: hook.config.freezeFirstColumn,
-        freezeFirstRow: hook.config.freezeFirstRow,
-        selectedColumnIndexForResizing: _selectedColumnIndexForResizing,
-        selectedRowIndexForResizing: _selectedRowIndexForResizing,
-        showFreezedColumnElevation: _showFreezedColumnElevation,
-        forceUpdate: true,
-      );
-    }
-    super.didUpdateHook(oldHook);
-  }
-
-  @override
-  void dispose() {
-    _horizontalControllers
-        .removeOffsetChangedListener(listenHorizontalScrollOffsetChange);
-    spreadsheetUIState.tableHeaderController.dispose();
-    spreadsheetUIState.tableBodyController.dispose();
-    spreadsheetUIState.verticalScrollController.dispose();
-    super.dispose();
-  }
-
-  @override
-  FlutterSpreadsheetUIState build(BuildContext context) => spreadsheetUIState;
 }
