@@ -4,7 +4,7 @@ class FlutterSpreadsheetUIConfig {
   const FlutterSpreadsheetUIConfig({
     this.cellWidth = 110,
     this.cellHeight = kMinInteractiveDimension,
-    this.freezedColumnWidth,
+    this.firstColumnWidth,
     this.headerHeight,
     this.freezedColumnExtendedByWidth = 50,
     this.freezeFirstColumn = true,
@@ -17,7 +17,7 @@ class FlutterSpreadsheetUIConfig {
   });
 
   final double cellWidth, cellHeight, freezedColumnExtendedByWidth, borderWidth;
-  final double? freezedColumnWidth, headerHeight;
+  final double? firstColumnWidth, headerHeight;
   final bool freezeFirstColumn,
       freezeFirstRow,
       enableColumnWidthDrag,

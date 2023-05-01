@@ -89,7 +89,7 @@ class _FlutterSpreadsheetUIHookState
     _allRows = _getRows();
 
     _headerHeight = hook.config.headerHeight ?? hook.config.cellHeight;
-    _freezedColumnWidth = hook.config.freezedColumnWidth ??
+    _freezedColumnWidth = hook.config.firstColumnWidth ??
         _allColumns.first.width ??
         hook.config.cellWidth;
 
@@ -155,7 +155,7 @@ class _FlutterSpreadsheetUIHookState
   void didUpdateHook(_FlutterSpreadsheetUIHook oldHook) {
     if (oldHook.columns != hook.columns ||
         oldHook.rows != hook.rows ||
-        oldHook.config.freezedColumnWidth != hook.config.freezedColumnWidth ||
+        oldHook.config.firstColumnWidth != hook.config.firstColumnWidth ||
         oldHook.config.headerHeight != hook.config.headerHeight ||
         oldHook.config.cellWidth != hook.config.cellWidth ||
         oldHook.config.cellHeight != hook.config.cellHeight ||
@@ -173,7 +173,7 @@ class _FlutterSpreadsheetUIHookState
       _allRows = _getRows();
 
       _headerHeight = hook.config.headerHeight ?? hook.config.cellHeight;
-      _freezedColumnWidth = hook.config.freezedColumnWidth ??
+      _freezedColumnWidth = hook.config.firstColumnWidth ??
           _allColumns.first.width ??
           hook.config.cellWidth;
 

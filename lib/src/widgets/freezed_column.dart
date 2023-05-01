@@ -23,7 +23,10 @@ class _FreezedColumn extends StatelessWidget {
                     tableState.freezedColumnWidth,
         extendedColumnWidth: tableState.freezedColumnExtendedByWidth,
         child: Material(
-          elevation: tableState.showFreezedColumnElevation ? 10 : 0,
+          elevation: tableState.freezeFirstColumn &&
+                  tableState.showFreezedColumnElevation
+              ? 10
+              : 0,
           child: _getChild(context),
         ),
       ),

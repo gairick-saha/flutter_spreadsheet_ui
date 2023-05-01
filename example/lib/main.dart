@@ -50,7 +50,9 @@ class _MyHomePageState extends State<MyHomePage> {
           config: const FlutterSpreadsheetUIConfig(
             enableColumnWidthDrag: true,
             enableRowHeightDrag: true,
-            freezedColumnWidth: 150,
+            firstColumnWidth: 150,
+            freezeFirstColumn: true,
+            freezeFirstRow: true,
           ),
           columns: [
             FlutterSpreadsheetUIColumn(
@@ -66,9 +68,16 @@ class _MyHomePageState extends State<MyHomePage> {
               width: 110,
               cellBuilder: (context, cellId) => const Text("Permissions"),
             ),
+            ...List.generate(
+              10,
+              (index) => FlutterSpreadsheetUIColumn(
+                width: 110,
+                cellBuilder: (context, cellId) => Text(cellId),
+              ),
+            ),
           ],
           rows: List.generate(
-            6,
+            20,
             (rowIndex) => FlutterSpreadsheetUIRow(
               cells: [
                 FlutterSpreadsheetUICell(
@@ -83,6 +92,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 FlutterSpreadsheetUICell(
                   cellBuilder: (context, cellId) => const Text(
                     'None',
+                  ),
+                ),
+                ...List.generate(
+                  10,
+                  (colIndex) => FlutterSpreadsheetUICell(
+                    cellBuilder: (context, cellId) => Text(
+                      cellId,
+                    ),
                   ),
                 ),
               ],
