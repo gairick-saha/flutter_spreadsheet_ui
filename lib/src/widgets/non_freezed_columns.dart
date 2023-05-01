@@ -41,12 +41,20 @@ class _NonFreezedColumns extends StatelessWidget {
 
           if (isHeaderItem) {
             return _BaseCell(
-              onTap: null,
+              onTap: () {
+                if (tableState.selectedColumns.isEmpty) {
+                  if (column.onCellPressed != null) {
+                    column.onCellPressed!();
+                  }
+                } else {
+                  tableState.columnSelectionCallback(cellId);
+                }
+              },
               onTapDown: null,
               onTapUp: null,
               onTapCancel: null,
               onDoubleTap: null,
-              onLongPress: null,
+              onLongPress: () => tableState.columnSelectionCallback(cellId),
               onHighlightChanged: null,
               onHover: null,
               onFocusChanged: null,

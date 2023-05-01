@@ -16,4 +16,8 @@ mixin FlutterSpreadsheetUICellDragCallbacks {
     String cellId,
     DragUpdateDetails dragUpdateDetails,
   );
+
+  void selectColumn(String cellId);
+
+  void selectRow(String cellId);
 }

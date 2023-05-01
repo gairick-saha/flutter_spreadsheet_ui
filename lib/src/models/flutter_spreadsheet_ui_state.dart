@@ -32,6 +32,8 @@ class FlutterSpreadsheetUIState {
     required this.startRowHeightResizeCallback,
     required this.endRowHeightResizeCallback,
     required this.rowHeightResizeUpdateCallback,
+    required this.columnSelectionCallback,
+    required this.rowSelectionCallback,
   });
 
   final ScrollController tableHeaderController,
@@ -56,6 +58,8 @@ class FlutterSpreadsheetUIState {
   final StartRowHeightResizeCallback startRowHeightResizeCallback;
   final EndRowHeightResizeCallback endRowHeightResizeCallback;
   final RowHeightResizeUpdateCallback rowHeightResizeUpdateCallback;
+  final FlutterSpreadsheetUIColumnSelectionCallback columnSelectionCallback;
+  final FlutterSpreadsheetUIRowSelectionCallback rowSelectionCallback;
 
   FlutterSpreadsheetUIState copyWith({
     List<FlutterSpreadsheetUIColumn>? columns,
@@ -121,6 +125,8 @@ class FlutterSpreadsheetUIState {
         startRowHeightResizeCallback: startRowHeightResizeCallback,
         endRowHeightResizeCallback: endRowHeightResizeCallback,
         rowHeightResizeUpdateCallback: rowHeightResizeUpdateCallback,
+        columnSelectionCallback: columnSelectionCallback,
+        rowSelectionCallback: rowSelectionCallback,
       );
 
   FlutterSpreadsheetUIColumn get freezedColumn => columns.first;

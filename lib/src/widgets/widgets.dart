@@ -25,6 +25,9 @@ typedef StartRowHeightResizeCallback = _CellIdCallback;
 typedef EndRowHeightResizeCallback = _CellIdCallback;
 typedef RowHeightResizeUpdateCallback = _CellIdAndDragupdateDetailsCallback;
 
+typedef FlutterSpreadsheetUIColumnSelectionCallback = _CellIdCallback;
+typedef FlutterSpreadsheetUIRowSelectionCallback = _CellIdCallback;
+
 typedef FlutterSpreadsheetUITableHeader = _TableHeader;
 typedef FlutterSpreadsheetUITableBody = _TableBody;
 

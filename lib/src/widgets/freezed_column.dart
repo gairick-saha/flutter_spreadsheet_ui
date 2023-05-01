@@ -23,7 +23,6 @@ class _FreezedColumn extends StatelessWidget {
                     tableState.freezedColumnWidth,
         extendedColumnWidth: tableState.freezedColumnExtendedByWidth,
         child: Material(
-          color: Colors.transparent,
           elevation: tableState.showFreezedColumnElevation ? 10 : 0,
           child: _getChild(context),
         ),
@@ -49,12 +48,20 @@ class _FreezedColumn extends StatelessWidget {
 
     if (isHeaderItem) {
       return _BaseCell(
-        onTap: null,
+        onTap: () {
+          if (tableState.selectedColumns.isEmpty) {
+            if (column.onCellPressed != null) {
+              column.onCellPressed!();
+            }
+          } else {
+            tableState.columnSelectionCallback(cellId);
+          }
+        },
         onTapDown: null,
         onTapUp: null,
         onTapCancel: null,
         onDoubleTap: null,
-        onLongPress: null,
+        onLongPress: () => tableState.columnSelectionCallback(cellId),
         onHighlightChanged: null,
         onHover: null,
         onFocusChanged: null,
@@ -113,12 +120,20 @@ class _FreezedColumn extends StatelessWidget {
                 null;
 
             return _BaseCell(
-              onTap: null,
+              onTap: () {
+                if (tableState.selectedRows.isEmpty) {
+                  if (row.cells[column.columnIndex].onCellPressed != null) {
+                    row.cells[column.columnIndex].onCellPressed!();
+                  }
+                } else {
+                  tableState.rowSelectionCallback(cellId);
+                }
+              },
               onTapDown: null,
               onTapUp: null,
               onTapCancel: null,
               onDoubleTap: null,
-              onLongPress: null,
+              onLongPress: () => tableState.rowSelectionCallback(cellId),
               onHighlightChanged: null,
               onHover: null,
               onFocusChanged: null,

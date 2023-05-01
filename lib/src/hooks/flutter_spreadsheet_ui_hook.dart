@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
@@ -108,6 +109,8 @@ class _FlutterSpreadsheetUIHookState
       startRowHeightResizeCallback: startRowHeightResizeCallback,
       endRowHeightResizeCallback: endRowHeightResizeCallback,
       rowHeightResizeUpdateCallback: rowHeightResizeUpdateCallback,
+      columnSelectionCallback: selectColumn,
+      rowSelectionCallback: selectRow,
     );
 
     _horizontalControllers
@@ -232,6 +235,50 @@ class _FlutterSpreadsheetUIHookState
       selectedRowIndexForResizing: _selectedRowIndexForResizing,
       selectedTempRowHeight: _selectedTempRowHeight,
       tempHeaderHeight: _tempHeaderHeight,
+    );
+    setState(() {});
+  }
+
+  @override
+  void selectColumn(String cellId) {
+    int columnIndex = FlutterSpreadsheetUI.getColumnIndexFromCellId(cellId);
+    final FlutterSpreadsheetUIColumn selectedColumn = _allColumns[columnIndex];
+
+    bool alreadySelected = _selectedColumns.firstWhereOrNull(
+            (element) => element.columnIndex == selectedColumn.columnIndex) !=
+        null;
+
+    if (alreadySelected) {
+      _selectedColumns.removeWhere(
+          (element) => element.columnIndex == selectedColumn.columnIndex);
+    } else {
+      _selectedColumns.add(selectedColumn);
+    }
+
+    spreadsheetUIState = spreadsheetUIState.copyWith(
+      selectedColumns: _selectedColumns,
+    );
+    setState(() {});
+  }
+
+  @override
+  void selectRow(String cellId) {
+    int rowIndex = FlutterSpreadsheetUI.getRowIndexFromCellId(cellId);
+
+    if (rowIndex > 0) {
+      final FlutterSpreadsheetUIRow selectedRow = _allRows[rowIndex - 1];
+      bool alreadySelected = _selectedRows.firstWhereOrNull(
+              (element) => element.rowIndex == selectedRow.rowIndex) !=
+          null;
+      if (alreadySelected) {
+        _selectedRows
+            .removeWhere((element) => element.rowIndex == selectedRow.rowIndex);
+      } else {
+        _selectedRows.add(selectedRow);
+      }
+    }
+    spreadsheetUIState = spreadsheetUIState.copyWith(
+      selectedRows: _selectedRows,
     );
     setState(() {});
   }
