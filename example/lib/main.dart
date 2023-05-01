@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_spreadsheet_ui/flutter_spreadsheet_ui.dart';
 
@@ -39,24 +41,51 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Padding(
         padding: const EdgeInsets.all(6.0),
         child: FlutterSpreadsheetUI(
+          columnWidthResizeCallback: (int columnIndex, double updatedWidth) {
+            log("Column: $columnIndex's updated width: $updatedWidth");
+          },
+          rowHeightResizeCallback: (int rowIndex, double updatedHeight) {
+            log("Row: $rowIndex's updated height: $updatedHeight");
+          },
           config: const FlutterSpreadsheetUIConfig(
+            enableColumnWidthDrag: true,
+            enableRowHeightDrag: true,
             freezedColumnWidth: 150,
           ),
-          columns: List.generate(
-            10,
-            (_) => FlutterSpreadsheetUIColumn(
-              cellBuilder: (context, cellId) => Text(cellId),
+          columns: [
+            FlutterSpreadsheetUIColumn(
+              contentAlignment: Alignment.center,
+              cellBuilder: (context, cellId) => const Text("Task"),
             ),
-          ),
+            FlutterSpreadsheetUIColumn(
+              width: 200,
+              contentAlignment: Alignment.center,
+              cellBuilder: (context, cellId) => const Text("Assigned Date"),
+            ),
+            FlutterSpreadsheetUIColumn(
+              width: 110,
+              cellBuilder: (context, cellId) => const Text("Permissions"),
+            ),
+          ],
           rows: List.generate(
-            15,
-            (_) => FlutterSpreadsheetUIRow(
-              cells: List.generate(
-                10,
-                (_) => FlutterSpreadsheetUICell(
-                  cellBuilder: (context, cellId) => Text(cellId),
+            6,
+            (rowIndex) => FlutterSpreadsheetUIRow(
+              cells: [
+                FlutterSpreadsheetUICell(
+                  cellBuilder: (context, cellId) =>
+                      Text('Task ${rowIndex + 1}'),
                 ),
-              ),
+                FlutterSpreadsheetUICell(
+                  cellBuilder: (context, cellId) => Text(
+                    DateTime.now().toString(),
+                  ),
+                ),
+                FlutterSpreadsheetUICell(
+                  cellBuilder: (context, cellId) => const Text(
+                    'None',
+                  ),
+                ),
+              ],
             ),
           ),
         ),
