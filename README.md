@@ -1,5 +1,3 @@
-A Flutter package for creaing spreadsheet like ui.
-
 ## FlutterSpreadsheetUI - v0.0.2
 
 [![pub package](https://img.shields.io/pub/v/flutter_spreadsheet_ui.svg?label=flutter_spreadsheet_ui&color=blue)](https://pub.dev/packages/flutter_spreadsheet_ui)
