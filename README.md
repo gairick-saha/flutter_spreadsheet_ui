@@ -1,4 +1,4 @@
-## FlutterSpreadsheetUI - v0.0.2
+## FlutterSpreadsheetUI - v0.0.5
 
 [![pub package](https://img.shields.io/pub/v/flutter_spreadsheet_ui.svg?label=flutter_spreadsheet_ui&color=blue)](https://pub.dev/packages/flutter_spreadsheet_ui)
 [![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/gairick-saha/flutter_spreadsheet_ui.svg)](https://github.com/gairick-saha/flutter_spreadsheet_ui)
@@ -29,7 +29,7 @@ Overall, `FlutterSpreadsheetUI` provides an easy-to-use and flexible way to crea
 Add this to your package's pubspec.yaml file:
 
 ```yaml
-flutter_spreadsheet_ui: '^0.0.2'
+flutter_spreadsheet_ui: '^0.0.5'
 ```
 
 <br>

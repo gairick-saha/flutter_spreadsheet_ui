@@ -16,3 +16,7 @@
 ## 0.0.4
 
 - Readme and project description updated
+
+## 0.0.5
+
+- Readme and project version fix
