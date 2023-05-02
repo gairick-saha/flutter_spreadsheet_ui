@@ -1,6 +1,6 @@
 name: flutter_spreadsheet_ui
-description: FlutterSpreadsheetUI is a Flutter package that allows developers to easily create and embed spreadsheet-like tables in their Flutter applications. With this package, developers can create interactive and customizable tables with various features such as column resizing, row resizing, and more. The package provides a range of configuration options, such as column and row sizing, grid line color and thickness, font style and size, and more, allowing developers to fully customize the appearance of their tables. FlutterSpreadsheetUI also includes various callbacks for developers to interact with the table and its data. These callbacks enable users to customize resize columns and rows, and more. Overall, FlutterSpreadsheetUI provides an easy-to-use and flexible way to create spreadsheet-like tables in Flutter, making it a great option for developers looking to create complex data displays in their applications.
-version: 0.0.3
+description: FlutterSpreadsheetUI is a Flutter package allowing developers to create and embed spreadsheet-like tables in their Flutter applications easily. With this package, developers can create fully customizable tables with various features such as column resizing, row resizing, and more.
+version: 0.0.4
 homepage: https://github.com/gairick-saha/flutter_spreadsheet_ui.git
 
 environment:

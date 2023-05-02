@@ -12,3 +12,7 @@
 ## 0.0.3
 
 - Readme and examples updated
+
+## 0.0.4
+
+- Readme and project description updated

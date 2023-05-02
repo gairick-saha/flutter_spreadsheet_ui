@@ -18,7 +18,9 @@
 </div>
 <br>
 
-`FlutterSpreadsheetUI` is a spreadsheet like `DataTable` which can help you to make beautiful looking spreadsheet like application.
+`FlutterSpreadsheetUI` is a Flutter package that allows developers to easily create and embed spreadsheet-like tables in their Flutter applications. With this package, developers can create interactive and customizable tables with various features such as column resizing, row resizing, and more. This package provides a range of configuration options, such as column and row sizing, grid line color and thickness, font style and size, and more, allowing developers to fully customize the appearance of their tables, also includes various callbacks for developers to interact with the table and its data. These callbacks enable users to handle resize of columns and rows and more.
+
+Overall, `FlutterSpreadsheetUI` provides an easy-to-use and flexible way to create spreadsheet-like tables in Flutter, making it a great option for developers looking to create complex data displays in their applications.
 
 <br>
 
