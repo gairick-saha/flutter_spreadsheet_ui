@@ -1,8 +1,7 @@
-import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
+part of 'scroll.dart';
 
-class FlutterSpreadsheetUIScrollBehavior extends MaterialScrollBehavior {
-  const FlutterSpreadsheetUIScrollBehavior({
+class _ScrollBehavior extends MaterialScrollBehavior {
+  const _ScrollBehavior({
     Set<PointerDeviceKind>? scrollingBehaviours,
   })  : _dragDevices = scrollingBehaviours ?? _defaultScrollingBehaviours,
         super();

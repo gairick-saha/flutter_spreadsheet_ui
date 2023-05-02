@@ -12,12 +12,8 @@ class _TableHeader extends StatelessWidget {
         headerHeight: tableState.tempHeaderHeight ?? tableState.headerHeight,
         child: Material(
           elevation: 0,
-          child: CustomScrollView(
-            controller: tableState.tableHeaderController,
-            scrollDirection: Axis.horizontal,
-            shrinkWrap: true,
-            clipBehavior: Clip.antiAliasWithSaveLayer,
-            scrollBehavior: const FlutterSpreadsheetUIScrollBehavior(),
+          child: HorizontalScrollWrapper(
+            scrollController: tableState.tableHeaderController,
             slivers: const [
               _FreezedColumn(isHeaderItem: true),
               _NonFreezedColumns(isHeaderItem: true),

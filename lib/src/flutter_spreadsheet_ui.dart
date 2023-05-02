@@ -4,7 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import '../flutter_spreadsheet_ui.dart';
 import 'hooks/flutter_spreadsheet_ui_hook.dart';
 import 'models/flutter_spreadsheet_ui_state.dart';
-import 'scroll/scroll_behaviour.dart';
+import 'widgets/scroll/scroll.dart';
 import 'widgets/widgets.dart';
 
 class _InheritedFlutterSpreadsheetUI extends InheritedWidget {

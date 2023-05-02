@@ -9,12 +9,8 @@ class _TableBody extends StatelessWidget {
     return SliverToBoxAdapter(
       child: LimitedBox(
         maxHeight: tableState.calculatedTotalRowsHeight,
-        child: CustomScrollView(
-          controller: tableState.tableBodyController,
-          scrollDirection: Axis.horizontal,
-          shrinkWrap: true,
-          clipBehavior: Clip.antiAliasWithSaveLayer,
-          scrollBehavior: const FlutterSpreadsheetUIScrollBehavior(),
+        child: HorizontalScrollWrapper(
+          scrollController: tableState.tableBodyController,
           slivers: const [
             _FreezedColumn(isHeaderItem: false),
             _NonFreezedColumns(isHeaderItem: false),

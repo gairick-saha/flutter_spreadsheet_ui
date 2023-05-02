@@ -1,9 +1,8 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-
 import '../../flutter_spreadsheet_ui.dart';
 import '../models/flutter_spreadsheet_ui_state.dart';
-import '../scroll/scroll_behaviour.dart';
+import 'scroll/scroll.dart';
 
 part 'base_cell.dart';
 part 'freezed_column.dart';
