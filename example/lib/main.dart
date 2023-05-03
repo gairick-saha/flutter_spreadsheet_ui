@@ -54,55 +54,24 @@ class _MyHomePageState extends State<MyHomePage> {
           rowHeightResizeCallback: (int rowIndex, double updatedHeight) {
             log("Row: $rowIndex's updated height: $updatedHeight");
           },
-          columns: [
-            // FlutterSpreadsheetUIColumn(
-            //   contentAlignment: Alignment.center,
-            //   cellBuilder: (context, cellId) => const Text("Task"),
-            // ),
-            // FlutterSpreadsheetUIColumn(
-            //   width: 200,
-            //   contentAlignment: Alignment.center,
-            //   cellBuilder: (context, cellId) => const Text("Assigned Date"),
-            // ),
-            // FlutterSpreadsheetUIColumn(
-            //   width: 110,
-            //   cellBuilder: (context, cellId) => const Text("Permissions"),
-            // ),
-            ...List.generate(
-              10,
-              (index) => FlutterSpreadsheetUIColumn(
-                width: 110,
-                cellBuilder: (context, cellId) => Text(cellId),
-              ),
+          columns: List.generate(
+            10,
+            (index) => FlutterSpreadsheetUIColumn(
+              width: 110,
+              cellBuilder: (context, cellId) => Text(cellId),
             ),
-          ],
+          ),
           rows: List.generate(
             20,
             (rowIndex) => FlutterSpreadsheetUIRow(
-              cells: [
-                // FlutterSpreadsheetUICell(
-                //   cellBuilder: (context, cellId) =>
-                //       Text('Task ${rowIndex + 1}'),
-                // ),
-                // FlutterSpreadsheetUICell(
-                //   cellBuilder: (context, cellId) => Text(
-                //     DateTime.now().toString(),
-                //   ),
-                // ),
-                // FlutterSpreadsheetUICell(
-                //   cellBuilder: (context, cellId) => const Text(
-                //     'None',
-                //   ),
-                // ),
-                ...List.generate(
-                  10,
-                  (colIndex) => FlutterSpreadsheetUICell(
-                    cellBuilder: (context, cellId) => Text(
-                      cellId,
-                    ),
+              cells: List.generate(
+                10,
+                (colIndex) => FlutterSpreadsheetUICell(
+                  cellBuilder: (context, cellId) => Text(
+                    cellId,
                   ),
                 ),
-              ],
+              ),
             ),
           ),
         ),
