@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_spreadsheet_ui/flutter_spreadsheet_ui.dart';
 
@@ -39,38 +37,37 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(6.0),
-        child: FlutterSpreadsheetUI(
-          config: const FlutterSpreadsheetUIConfig(
-            enableColumnWidthDrag: true,
-            enableRowHeightDrag: true,
-            firstColumnWidth: 150,
-            freezeFirstColumn: true,
-            freezeFirstRow: true,
-          ),
-          columnWidthResizeCallback: (int columnIndex, double updatedWidth) {
-            log("Column: $columnIndex's updated width: $updatedWidth");
+        padding: const EdgeInsets.all(10.0),
+        child: NotificationListener<OverscrollIndicatorNotification>(
+          onNotification: (notification) {
+            notification.disallowIndicator();
+            return false;
           },
-          rowHeightResizeCallback: (int rowIndex, double updatedHeight) {
-            log("Row: $rowIndex's updated height: $updatedHeight");
-          },
-          columns: List.generate(
-            10,
-            (index) => FlutterSpreadsheetUIColumn(
-              width: 110,
-              cellBuilder: (context, cellId) => Text(cellId),
-            ),
-          ),
-          rows: List.generate(
-            20,
-            (rowIndex) => FlutterSpreadsheetUIRow(
-              cells: List.generate(
-                10,
-                (colIndex) => FlutterSpreadsheetUICell(
-                  cellBuilder: (context, cellId) => Text(
-                    cellId,
-                  ),
+          child: FlutterSpreadsheetUI(
+            columnCount: 10,
+            rowCount: 50,
+            diagonalDragBehavior: DiagonalDragBehavior.none,
+            columnBuilder: (int index) => FlutterSpreadsheetUIColumn(
+              width: 200,
+              decoration: FlutterSpreadsheetUIColumnDecoration(
+                border: FlutterSpreadsheetUIColumnBorder(
+                  left: index == 0 ? const BorderSide() : BorderSide.none,
+                  right: const BorderSide(),
                 ),
+              ),
+            ),
+            rowBuilder: (int index) => FlutterSpreadsheetUIRow(
+              height: kMinInteractiveDimension,
+              decoration: FlutterSpreadsheetUIRowDecoration(
+                border: FlutterSpreadsheetUIRowBorder(
+                  left: index == 0 ? const BorderSide() : BorderSide.none,
+                  right: const BorderSide(),
+                ),
+              ),
+            ),
+            cellBuilder: (BuildContext context, CellIndex cellIndex) => Center(
+              child: Text(
+                cellIndex.toString(),
               ),
             ),
           ),
