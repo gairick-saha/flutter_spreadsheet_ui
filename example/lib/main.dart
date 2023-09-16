@@ -38,37 +38,33 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
-        child: NotificationListener<OverscrollIndicatorNotification>(
-          onNotification: (notification) {
-            notification.disallowIndicator();
-            return false;
-          },
-          child: FlutterSpreadsheetUI(
-            columnCount: 10,
-            rowCount: 50,
-            diagonalDragBehavior: DiagonalDragBehavior.none,
-            columnBuilder: (int index) => FlutterSpreadsheetUIColumn(
-              width: 200,
-              decoration: FlutterSpreadsheetUIColumnDecoration(
-                border: FlutterSpreadsheetUIColumnBorder(
-                  left: index == 0 ? const BorderSide() : BorderSide.none,
-                  right: const BorderSide(),
-                ),
-              ),
+        child: FlutterSpreadsheetUI(
+          config: FlutterSpreadsheetUIConfig(pinnedFirstRow: true),
+          columns: List.generate(
+            10,
+            (index) => FlutterSpreadsheetUIColumn<String>(
+              value: (index).toString(),
+              builder: (
+                BuildContext context,
+                CellIndex cellIndex,
+                data,
+              ) {
+                return Center(
+                    child: Text('Col : $cellIndex\nColumnData: $data'));
+              },
             ),
-            rowBuilder: (int index) => FlutterSpreadsheetUIRow(
-              height: kMinInteractiveDimension,
-              decoration: FlutterSpreadsheetUIRowDecoration(
-                border: FlutterSpreadsheetUIRowBorder(
-                  left: index == 0 ? const BorderSide() : BorderSide.none,
-                  right: const BorderSide(),
-                ),
-              ),
-            ),
-            cellBuilder: (BuildContext context, CellIndex cellIndex) => Center(
-              child: Text(
-                cellIndex.toString(),
-              ),
+          ),
+          rows: List.generate(
+            10,
+            (index) => FlutterSpreadsheetUIRow<String>(
+              value: (index).toString(),
+              builder: (
+                BuildContext context,
+                CellIndex cellIndex,
+                data,
+              ) {
+                return Center(child: Text('Row : $cellIndex\nRowData: $data'));
+              },
             ),
           ),
         ),

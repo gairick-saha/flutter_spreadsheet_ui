@@ -11,18 +11,19 @@ part 'cell.dart';
 part 'column.dart';
 part 'row.dart';
 part 'delegates.dart';
+part 'viewport_renderer.dart';
 part 'viewport.dart';
-part 'flutter_spreadsheet_ui.dart';
+part 'spreadsheet_ui.dart';
 
-typedef FlutterSpreadsheetUIColumnBuilder = FlutterSpreadsheetUIColumn Function(
+typedef SpreadsheetUIColumnBuilder = SpreadsheetUIColumn Function(
   int index,
 );
 
-typedef FlutterSpreadsheetUIRowBuilder = FlutterSpreadsheetUIRow Function(
+typedef SpreadsheetUIRowBuilder = SpreadsheetUIRow Function(
   int index,
 );
 
-typedef FlutterSpreadsheetUICellBuilder = Function(
+typedef SpreadsheetUICellBuilder = Widget Function(
   BuildContext context,
   CellIndex cellIndex,
 );

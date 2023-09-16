@@ -1,57 +1,12 @@
-part of 'ui.dart';
+part of 'table.dart';
 
-class FlutterSpreadsheetUIViewport extends TwoDimensionalViewport {
-  const FlutterSpreadsheetUIViewport({
-    super.key,
-    required super.verticalOffset,
-    required super.verticalAxisDirection,
-    required super.horizontalOffset,
-    required super.horizontalAxisDirection,
-    required FlutterSpreadsheetUICellDelegateMixin super.delegate,
-    required super.mainAxis,
-    super.cacheExtent,
-    super.clipBehavior,
-  });
-
-  @override
-  RenderTwoDimensionalViewport createRenderObject(BuildContext context) {
-    return RenderFlutterSpreadsheetUIViewport(
-      horizontalOffset: horizontalOffset,
-      horizontalAxisDirection: horizontalAxisDirection,
-      verticalOffset: verticalOffset,
-      verticalAxisDirection: verticalAxisDirection,
-      mainAxis: mainAxis,
-      cacheExtent: cacheExtent,
-      clipBehavior: clipBehavior,
-      delegate: delegate as FlutterSpreadsheetUICellDelegateMixin,
-      childManager: context as TwoDimensionalChildManager,
-    );
-  }
-
-  @override
-  void updateRenderObject(
-    BuildContext context,
-    RenderFlutterSpreadsheetUIViewport renderObject,
-  ) {
-    renderObject
-      ..horizontalOffset = horizontalOffset
-      ..horizontalAxisDirection = horizontalAxisDirection
-      ..verticalOffset = verticalOffset
-      ..verticalAxisDirection = verticalAxisDirection
-      ..mainAxis = mainAxis
-      ..cacheExtent = cacheExtent
-      ..clipBehavior = clipBehavior
-      ..delegate = delegate as FlutterSpreadsheetUICellDelegateMixin;
-  }
-}
-
-class RenderFlutterSpreadsheetUIViewport extends RenderTwoDimensionalViewport {
-  RenderFlutterSpreadsheetUIViewport({
+class RenderSpreadsheetUIViewport extends RenderTwoDimensionalViewport {
+  RenderSpreadsheetUIViewport({
     required super.horizontalOffset,
     required super.horizontalAxisDirection,
     required super.verticalOffset,
     required super.verticalAxisDirection,
-    required FlutterSpreadsheetUICellDelegateMixin super.delegate,
+    required SpreadsheetUICellDelegateMixin super.delegate,
     required super.mainAxis,
     required super.childManager,
     super.cacheExtent,
@@ -59,11 +14,11 @@ class RenderFlutterSpreadsheetUIViewport extends RenderTwoDimensionalViewport {
   });
 
   @override
-  FlutterSpreadsheetUICellDelegateMixin get delegate =>
-      super.delegate as FlutterSpreadsheetUICellDelegateMixin;
+  SpreadsheetUICellDelegateMixin get delegate =>
+      super.delegate as SpreadsheetUICellDelegateMixin;
 
   @override
-  set delegate(FlutterSpreadsheetUICellDelegateMixin value) {
+  set delegate(SpreadsheetUICellDelegateMixin value) {
     super.delegate = value;
   }
 
@@ -106,13 +61,13 @@ class RenderFlutterSpreadsheetUIViewport extends RenderTwoDimensionalViewport {
       _lastPinnedColumn != null ? _columnMetrics[_lastPinnedColumn]!.size : 0.0;
 
   @override
-  FlutterSpreadsheetUIParentData parentDataOf(RenderBox child) =>
-      child.parentData! as FlutterSpreadsheetUIParentData;
+  SpreadsheetUIParentData parentDataOf(RenderBox child) =>
+      child.parentData! as SpreadsheetUIParentData;
 
   @override
   void setupParentData(RenderBox child) {
-    if (child.parentData is! FlutterSpreadsheetUIParentData) {
-      child.parentData = FlutterSpreadsheetUIParentData();
+    if (child.parentData is! SpreadsheetUIParentData) {
+      child.parentData = SpreadsheetUIParentData();
     }
   }
 
@@ -131,7 +86,7 @@ class RenderFlutterSpreadsheetUIViewport extends RenderTwoDimensionalViewport {
           isPinned ? startOfPinnedColumn : startOfRegularColumn;
       _ColumnSpan? span = _columnMetrics.remove(column);
       assert(needsDelegateRebuild || span != null);
-      final FlutterSpreadsheetUIColumn configuration = needsDelegateRebuild
+      final SpreadsheetUIColumn configuration = needsDelegateRebuild
           ? delegate.buildColumn(column)
           : span!.configuration;
       span ??= _ColumnSpan();
@@ -177,7 +132,7 @@ class RenderFlutterSpreadsheetUIViewport extends RenderTwoDimensionalViewport {
           isPinned ? startOfPinnedRow : startOfRegularRow;
       _RowSpan? span = _rowMetrics.remove(row);
       assert(needsDelegateRebuild || span != null);
-      final FlutterSpreadsheetUIRow configuration =
+      final SpreadsheetUIRow configuration =
           needsDelegateRebuild ? delegate.buildRow(row) : span!.configuration;
       span ??= _RowSpan();
       span.updateRow(
@@ -386,8 +341,7 @@ class RenderFlutterSpreadsheetUIViewport extends RenderTwoDimensionalViewport {
         final RenderBox? cell = buildOrObtainChildFor(cellIndex);
 
         if (cell != null) {
-          final FlutterSpreadsheetUIParentData cellParentData =
-              parentDataOf(cell);
+          final SpreadsheetUIParentData cellParentData = parentDataOf(cell);
 
           final BoxConstraints cellConstraints = BoxConstraints.tightFor(
             width: columnWidth,
@@ -512,9 +466,8 @@ class RenderFlutterSpreadsheetUIViewport extends RenderTwoDimensionalViewport {
     required CellIndex trailing,
     required Offset offset,
   }) {
-    final LinkedHashMap<Rect, FlutterSpreadsheetUIColumnDecoration>
-        columnDecorations =
-        LinkedHashMap<Rect, FlutterSpreadsheetUIColumnDecoration>();
+    final LinkedHashMap<Rect, SpreadsheetUIColumnDecoration> columnDecorations =
+        LinkedHashMap<Rect, SpreadsheetUIColumnDecoration>();
 
     for (int column = leading.column; column <= trailing.column; column++) {
       final _ColumnSpan span = _columnMetrics[column]!;
@@ -539,9 +492,8 @@ class RenderFlutterSpreadsheetUIViewport extends RenderTwoDimensionalViewport {
       }
     }
 
-    final LinkedHashMap<Rect, FlutterSpreadsheetUIRowDecoration>
-        rowDecorations =
-        LinkedHashMap<Rect, FlutterSpreadsheetUIRowDecoration>();
+    final LinkedHashMap<Rect, SpreadsheetUIRowDecoration> rowDecorations =
+        LinkedHashMap<Rect, SpreadsheetUIRowDecoration>();
 
     for (int row = leading.row; row <= trailing.row; row++) {
       final _RowSpan span = _rowMetrics[row]!;
@@ -567,20 +519,20 @@ class RenderFlutterSpreadsheetUIViewport extends RenderTwoDimensionalViewport {
 
     switch (mainAxis) {
       case Axis.vertical:
-        rowDecorations
-            .forEach((Rect rect, FlutterSpreadsheetUIDecoration decoration) {
-          final FlutterSpreadsheetUIDecorationPaintDetails paintingDetails =
-              FlutterSpreadsheetUIDecorationPaintDetails(
+        rowDecorations.forEach((Rect rect, SpreadsheetUIDecoration decoration) {
+          final SpreadsheetUIDecorationPaintDetails paintingDetails =
+              SpreadsheetUIDecorationPaintDetails(
             canvas: context.canvas,
             rect: rect,
             axisDirection: horizontalAxisDirection,
           );
+
           decoration.paint(paintingDetails);
         });
         columnDecorations.forEach(
-          (Rect rect, FlutterSpreadsheetUIDecoration decoration) {
-            final FlutterSpreadsheetUIDecorationPaintDetails paintingDetails =
-                FlutterSpreadsheetUIDecorationPaintDetails(
+          (Rect rect, SpreadsheetUIDecoration decoration) {
+            final SpreadsheetUIDecorationPaintDetails paintingDetails =
+                SpreadsheetUIDecorationPaintDetails(
               canvas: context.canvas,
               rect: rect,
               axisDirection: verticalAxisDirection,
@@ -592,9 +544,9 @@ class RenderFlutterSpreadsheetUIViewport extends RenderTwoDimensionalViewport {
 
       case Axis.horizontal:
         columnDecorations
-            .forEach((Rect rect, FlutterSpreadsheetUIDecoration decoration) {
-          final FlutterSpreadsheetUIDecorationPaintDetails paintingDetails =
-              FlutterSpreadsheetUIDecorationPaintDetails(
+            .forEach((Rect rect, SpreadsheetUIDecoration decoration) {
+          final SpreadsheetUIDecorationPaintDetails paintingDetails =
+              SpreadsheetUIDecorationPaintDetails(
             canvas: context.canvas,
             rect: rect,
             axisDirection: verticalAxisDirection,
@@ -602,9 +554,9 @@ class RenderFlutterSpreadsheetUIViewport extends RenderTwoDimensionalViewport {
           decoration.paint(paintingDetails);
         });
         rowDecorations.forEach(
-          (Rect rect, FlutterSpreadsheetUIDecoration decoration) {
-            final FlutterSpreadsheetUIDecorationPaintDetails paintingDetails =
-                FlutterSpreadsheetUIDecorationPaintDetails(
+          (Rect rect, SpreadsheetUIDecoration decoration) {
+            final SpreadsheetUIDecorationPaintDetails paintingDetails =
+                SpreadsheetUIDecorationPaintDetails(
               canvas: context.canvas,
               rect: rect,
               axisDirection: horizontalAxisDirection,
@@ -622,8 +574,7 @@ class RenderFlutterSpreadsheetUIViewport extends RenderTwoDimensionalViewport {
             row: row,
           ),
         )!;
-        final FlutterSpreadsheetUIParentData cellParentData =
-            parentDataOf(cell);
+        final SpreadsheetUIParentData cellParentData = parentDataOf(cell);
         if (cellParentData.isVisible) {
           context.paintChild(cell, offset + cellParentData.paintOffset!);
         }
@@ -638,81 +589,4 @@ class RenderFlutterSpreadsheetUIViewport extends RenderTwoDimensionalViewport {
     _clipCellsHandle.layer = null;
     super.dispose();
   }
-}
-
-class _ColumnSpan implements Drag {
-  double get startOffset => _startOffset;
-  late double _startOffset;
-
-  double get width => _width;
-  late double _width;
-
-  FlutterSpreadsheetUIColumn get configuration => _configuration!;
-  FlutterSpreadsheetUIColumn? _configuration;
-
-  bool get isPinned => _isPinned;
-  late bool _isPinned;
-
-  double get size => startOffset + width;
-
-  void updateColumn({
-    required FlutterSpreadsheetUIColumn configuration,
-    required double startOffset,
-    required double width,
-    required bool isPinned,
-  }) {
-    _startOffset = startOffset;
-    _width = width;
-    _isPinned = isPinned;
-    if (configuration == _configuration) {
-      return;
-    }
-    _configuration = configuration;
-  }
-
-  void dispose() {}
-
-  @override
-  void cancel() {}
-
-  @override
-  void end(DragEndDetails details) {}
-
-  @override
-  void update(DragUpdateDetails details) {
-    log(details.delta.dx.toString());
-  }
-}
-
-class _RowSpan {
-  double get startOffset => _startOffset;
-  late double _startOffset;
-
-  double get height => _height;
-  late double _height;
-
-  FlutterSpreadsheetUIRow get configuration => _configuration!;
-  FlutterSpreadsheetUIRow? _configuration;
-
-  bool get isPinned => _isPinned;
-  late bool _isPinned;
-
-  double get size => startOffset + height;
-
-  void updateRow({
-    required FlutterSpreadsheetUIRow configuration,
-    required double startOffset,
-    required double height,
-    required bool isPinned,
-  }) {
-    _startOffset = startOffset;
-    _height = height;
-    _isPinned = isPinned;
-    if (configuration == _configuration) {
-      return;
-    }
-    _configuration = configuration;
-  }
-
-  void dispose() {}
 }

@@ -1,4 +1,4 @@
-part of 'ui.dart';
+part of 'table.dart';
 
 @immutable
 class CellIndex extends ChildVicinity {
@@ -15,6 +15,6 @@ class CellIndex extends ChildVicinity {
   String toString() => '(row: $row, column: $column)';
 }
 
-class FlutterSpreadsheetUIParentData extends TwoDimensionalViewportParentData {
+class SpreadsheetUIParentData extends TwoDimensionalViewportParentData {
   CellIndex get cellIndex => vicinity as CellIndex;
 }

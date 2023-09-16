@@ -1,6 +1,6 @@
-part of 'ui.dart';
+part of 'table.dart';
 
-mixin FlutterSpreadsheetUICellDelegateMixin on TwoDimensionalChildDelegate {
+mixin SpreadsheetUICellDelegateMixin on TwoDimensionalChildDelegate {
   int get columnCount;
 
   int get rowCount;
@@ -9,23 +9,23 @@ mixin FlutterSpreadsheetUICellDelegateMixin on TwoDimensionalChildDelegate {
 
   int get pinnedRowCount => 0;
 
-  FlutterSpreadsheetUIColumn buildColumn(int index);
+  SpreadsheetUIColumn buildColumn(int index);
 
-  FlutterSpreadsheetUIRow buildRow(int index);
+  SpreadsheetUIRow buildRow(int index);
 }
 
-class FlutterSpreadsheetUICellBuilderDelegate
+class SpreadsheetUICellBuilderDelegate
     extends TwoDimensionalChildBuilderDelegate
-    with FlutterSpreadsheetUICellDelegateMixin {
-  FlutterSpreadsheetUICellBuilderDelegate({
+    with SpreadsheetUICellDelegateMixin {
+  SpreadsheetUICellBuilderDelegate({
     required int columnCount,
     required int rowCount,
     int pinnedColumnCount = 0,
     int pinnedRowCount = 0,
     super.addRepaintBoundaries,
-    required FlutterSpreadsheetUIColumnBuilder columnBuilder,
-    required FlutterSpreadsheetUIRowBuilder rowBuilder,
-    required FlutterSpreadsheetUICellBuilder cellBuilder,
+    required SpreadsheetUIColumnBuilder columnBuilder,
+    required SpreadsheetUIRowBuilder rowBuilder,
+    required SpreadsheetUICellBuilder cellBuilder,
   })  : assert(columnCount >= 0),
         assert(rowCount >= 0),
         assert(pinnedColumnCount >= 0),
@@ -51,9 +51,9 @@ class FlutterSpreadsheetUICellBuilderDelegate
     maxXIndex = value - 1;
   }
 
-  final FlutterSpreadsheetUIColumnBuilder _columnBuilder;
+  final SpreadsheetUIColumnBuilder _columnBuilder;
   @override
-  FlutterSpreadsheetUIColumn buildColumn(int index) => _columnBuilder(index);
+  SpreadsheetUIColumn buildColumn(int index) => _columnBuilder(index);
 
   @override
   int get pinnedColumnCount => _pinnedColumnCount;
@@ -76,9 +76,9 @@ class FlutterSpreadsheetUICellBuilderDelegate
     maxYIndex = value - 1;
   }
 
-  final FlutterSpreadsheetUIRowBuilder _rowBuilder;
+  final SpreadsheetUIRowBuilder _rowBuilder;
   @override
-  FlutterSpreadsheetUIRow buildRow(int index) => _rowBuilder(index);
+  SpreadsheetUIRow buildRow(int index) => _rowBuilder(index);
 
   @override
   int get pinnedRowCount => _pinnedRowCount;
