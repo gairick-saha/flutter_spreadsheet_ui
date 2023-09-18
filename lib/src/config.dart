@@ -8,10 +8,15 @@ class FlutterSpreadsheetUIConfig {
     this.borderSide,
     this.borderColor = Colors.grey,
     this.pinnedFirstRow = false,
+    this.columnRowHeight = kDefaultRowHeight,
+    this.columnRowColor,
+    this.emptyRowBuilder,
   });
 
   final BorderSide? borderSide;
   final Color borderColor;
-
   final bool pinnedFirstRow;
+  final Color? columnRowColor;
+  final double columnRowHeight;
+  final FlutterSpreadsheetUIEmptyRow? emptyRowBuilder;
 }

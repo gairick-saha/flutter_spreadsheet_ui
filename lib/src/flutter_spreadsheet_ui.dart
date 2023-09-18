@@ -23,11 +23,11 @@ class FlutterSpreadsheetUI extends StatelessWidget {
       columns: columns.map((e) => SpreadsheetUIColumn(width: 200)).toList(),
       rows: rows
           .map((e) => SpreadsheetUIRow(
-                isFreezed:
-                    rows.first == e ? config?.pinnedFirstRow ?? false : false,
-                height: kDefaultRowHeight,
+                isFreezed: false,
+                height: e.height,
               ))
           .toList(),
+      freezeColumnRow: config?.pinnedFirstRow ?? false,
       diagonalDragBehavior: DiagonalDragBehavior.none,
       columnBuilder: (int index) => SpreadsheetUIColumn(
         width: columns[index].width,
@@ -42,31 +42,45 @@ class FlutterSpreadsheetUI extends StatelessWidget {
                           Theme.of(context).disabledColor,
                     ))
                 : BorderSide.none,
-            right: (columns[index].borderSide ??
+            right: columns[index].borderSide ??
                 config?.borderSide ??
                 BorderSide(
                   color: config?.borderColor ?? Theme.of(context).disabledColor,
-                )),
+                ),
           ),
         ),
       ),
+      columnRowBuilder: (int index) => SpreadsheetUIRow(
+        height: config?.columnRowHeight ?? kDefaultRowHeight,
+        isFreezed: true,
+        decoration: SpreadsheetUIRowDecoration(
+          color: config?.columnRowColor,
+          border: SpreadsheetUIRowBorder(
+            top: config?.borderSide ??
+                BorderSide(
+                  color: config?.borderColor ?? Theme.of(context).disabledColor,
+                ),
+            bottom: config?.borderSide ??
+                BorderSide(
+                  color: config?.borderColor ?? Theme.of(context).disabledColor,
+                ),
+          ),
+        ),
+      ),
+      columnCellsBuilder: (context, cellIndex) {
+        final int columnIndex = cellIndex.column;
+        final column = columns[columnIndex];
+        return column.toWidget(context, cellIndex);
+      },
       rowBuilder: (int index) => SpreadsheetUIRow(
         height: rows[index].height,
         decoration: SpreadsheetUIRowDecoration(
           border: SpreadsheetUIRowBorder(
-            left: index == 0
-                ? (rows[index].borderSide ??
-                    config?.borderSide ??
-                    BorderSide(
-                      color: config?.borderColor ??
-                          Theme.of(context).disabledColor,
-                    ))
-                : BorderSide.none,
-            right: (rows[index].borderSide ??
+            bottom: rows[index].borderSide ??
                 config?.borderSide ??
                 BorderSide(
                   color: config?.borderColor ?? Theme.of(context).disabledColor,
-                )),
+                ),
           ),
         ),
       ),
@@ -77,11 +91,30 @@ class FlutterSpreadsheetUI extends StatelessWidget {
         final int columnIndex = cellIndex.column;
         final column = columns[columnIndex];
 
-        if (rowIndex == 0) {
-          return column.toWidget(context, cellIndex);
-        }
-
-        return row.toWidget(context, cellIndex);
+        return Align(
+          alignment: column.contentAlignment,
+          child: row.toWidget(context, cellIndex),
+        );
+      },
+      emptyRowBuilder: (int index) => SpreadsheetUIRow(
+        height: config?.emptyRowBuilder?.height ?? kDefaultRowHeight,
+        isFreezed: false,
+        decoration: SpreadsheetUIRowDecoration(
+          color: config?.emptyRowBuilder?.color,
+          border: SpreadsheetUIRowBorder(
+            bottom: config?.emptyRowBuilder?.borderSide ??
+                BorderSide(
+                  color: config?.borderColor ?? Theme.of(context).disabledColor,
+                ),
+          ),
+        ),
+      ),
+      emptyRowCellsBuilder: (context, cellIndex) {
+        return Align(
+          alignment: Alignment.center,
+          child: config?.emptyRowBuilder?.builder?.call(context) ??
+              const Text('No data'),
+        );
       },
     );
   }

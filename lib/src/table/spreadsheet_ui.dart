@@ -3,11 +3,15 @@ part of 'table.dart';
 class SpreadsheetUI extends TwoDimensionalScrollView {
   SpreadsheetUI({
     Key? key,
-    required this.columns,
-    required this.rows,
+    required List<SpreadsheetUIColumn> columns,
+    required List<SpreadsheetUIRow> rows,
     SpreadsheetUIColumnBuilder? columnBuilder,
+    SpreadsheetUIRowBuilder? columnRowBuilder,
     SpreadsheetUIRowBuilder? rowBuilder,
+    SpreadsheetUIRowBuilder? emptyRowBuilder,
     required SpreadsheetUICellBuilder cellBuilder,
+    required SpreadsheetUICellBuilder emptyRowCellsBuilder,
+    required SpreadsheetUICellBuilder columnCellsBuilder,
     bool? primary,
     Axis mainAxis = Axis.vertical,
     ScrollableDetails horizontalDetails = const ScrollableDetails.horizontal(),
@@ -18,6 +22,7 @@ class SpreadsheetUI extends TwoDimensionalScrollView {
     ScrollViewKeyboardDismissBehavior keyboardDismissBehavior =
         ScrollViewKeyboardDismissBehavior.manual,
     Clip clipBehavior = Clip.hardEdge,
+    bool freezeColumnRow = true,
   }) : super(
           key: key,
           primary: primary,
@@ -30,19 +35,33 @@ class SpreadsheetUI extends TwoDimensionalScrollView {
           keyboardDismissBehavior: keyboardDismissBehavior,
           clipBehavior: clipBehavior,
           delegate: SpreadsheetUICellBuilderDelegate(
-            columnCount: columns.length,
-            rowCount: rows.length,
-            pinnedColumnCount:
-                columns.where((element) => element.isFreezed).length,
-            pinnedRowCount: rows.where((element) => element.isFreezed).length,
-            columnBuilder: columnBuilder ?? (int index) => columns[index],
-            rowBuilder: rowBuilder ?? (int index) => rows[index],
+            columns: columns,
+            isEmptyRow: rows.isEmpty,
+            rows: List.from([
+              SpreadsheetUIRow(
+                height: columnRowBuilder?.call(0).height ?? kDefaultRowHeight,
+                decoration: columnRowBuilder?.call(0).decoration,
+                isFreezed:
+                    columnRowBuilder?.call(0).isFreezed ?? freezeColumnRow,
+              ),
+              if (rows.isEmpty)
+                SpreadsheetUIRow(
+                  isFreezed: emptyRowBuilder?.call(1).isFreezed ?? false,
+                  height: emptyRowBuilder?.call(1).height ?? kDefaultRowHeight,
+                  decoration: emptyRowBuilder?.call(1).decoration,
+                )
+              else
+                ...rows,
+            ]),
+            columnBuilder: columnBuilder,
+            columnRowBuilder: columnRowBuilder,
+            rowBuilder: rowBuilder,
+            emptyRowBuilder: emptyRowBuilder,
             cellBuilder: cellBuilder,
+            columnCellsBuilder: columnCellsBuilder,
+            emptyRowCellsBuilder: emptyRowCellsBuilder,
           ),
         );
-
-  final List<SpreadsheetUIColumn> columns;
-  final List<SpreadsheetUIRow> rows;
 
   @override
   Widget build(BuildContext context) {
@@ -52,9 +71,9 @@ class SpreadsheetUI extends TwoDimensionalScrollView {
         return false;
       },
       child: SizedBox(
-        width: columns.fold(
+        width: (delegate as SpreadsheetUICellBuilderDelegate).columns.fold(
             0, (previousValue, element) => previousValue! + element.width),
-        height: rows.fold(
+        height: (delegate as SpreadsheetUICellBuilderDelegate).rows.fold(
             0, (previousValue, element) => previousValue! + element.height),
         child: super.build(context),
       ),

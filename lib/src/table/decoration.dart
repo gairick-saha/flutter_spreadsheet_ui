@@ -1,5 +1,9 @@
 part of 'table.dart';
 
+abstract class SpreadsheetUIEmptyRowDecoration {
+  void paint(SpreadsheetUIDecorationPaintDetails details);
+}
+
 abstract class SpreadsheetUIDecoration {
   void paint(SpreadsheetUIDecorationPaintDetails details);
 }

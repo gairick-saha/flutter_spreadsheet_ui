@@ -39,7 +39,15 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: FlutterSpreadsheetUI(
-          config: FlutterSpreadsheetUIConfig(pinnedFirstRow: true),
+          config: FlutterSpreadsheetUIConfig(
+            pinnedFirstRow: true,
+            columnRowHeight: kDefaultRowHeight,
+            emptyRowBuilder: FlutterSpreadsheetUIEmptyRow(
+              builder: (context) => const Center(
+                child: Text('No data available'),
+              ),
+            ),
+          ),
           columns: List.generate(
             10,
             (index) => FlutterSpreadsheetUIColumn<String>(
@@ -49,13 +57,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 CellIndex cellIndex,
                 data,
               ) {
-                return Center(
-                    child: Text('Col : $cellIndex\nColumnData: $data'));
+                return Text('Col : $cellIndex');
               },
             ),
           ),
           rows: List.generate(
-            10,
+            0,
             (index) => FlutterSpreadsheetUIRow<String>(
               value: (index).toString(),
               builder: (
@@ -63,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 CellIndex cellIndex,
                 data,
               ) {
-                return Center(child: Text('Row : $cellIndex\nRowData: $data'));
+                return Text('Row : $cellIndex');
               },
             ),
           ),

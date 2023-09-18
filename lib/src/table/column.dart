@@ -1,6 +1,6 @@
 part of 'table.dart';
 
-class _ColumnSpan implements Drag {
+class _ColumnSpan {
   double get startOffset => _startOffset;
   late double _startOffset;
 
@@ -31,17 +31,6 @@ class _ColumnSpan implements Drag {
   }
 
   void dispose() {}
-
-  @override
-  void cancel() {}
-
-  @override
-  void end(DragEndDetails details) {}
-
-  @override
-  void update(DragUpdateDetails details) {
-    log(details.delta.dx.toString());
-  }
 }
 
 class SpreadsheetUIColumn {

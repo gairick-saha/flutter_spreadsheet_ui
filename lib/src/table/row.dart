@@ -73,12 +73,12 @@ class SpreadsheetUIRowDecoration extends SpreadsheetUIDecoration {
 
 class SpreadsheetUIRowBorder extends SpreadsheetUIBorder {
   SpreadsheetUIRowBorder({
-    this.left = BorderSide.none,
-    this.right = BorderSide.none,
+    this.top = BorderSide.none,
+    this.bottom = BorderSide.none,
   });
 
-  final BorderSide left;
-  final BorderSide right;
+  final BorderSide top;
+  final BorderSide bottom;
 
   @override
   void paint(SpreadsheetUIDecorationPaintDetails details) {
@@ -88,16 +88,16 @@ class SpreadsheetUIRowBorder extends SpreadsheetUIBorder {
         paintBorder(
           details.canvas,
           details.rect,
-          top: axisDirection == AxisDirection.right ? left : right,
-          bottom: axisDirection == AxisDirection.right ? right : left,
+          top: axisDirection == AxisDirection.right ? top : bottom,
+          bottom: axisDirection == AxisDirection.right ? bottom : top,
         );
         break;
       case Axis.vertical:
         paintBorder(
           details.canvas,
           details.rect,
-          left: axisDirection == AxisDirection.down ? left : right,
-          right: axisDirection == AxisDirection.down ? right : left,
+          left: axisDirection == AxisDirection.down ? top : bottom,
+          right: axisDirection == AxisDirection.down ? bottom : top,
         );
         break;
     }

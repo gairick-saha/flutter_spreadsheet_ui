@@ -18,9 +18,7 @@ class RenderSpreadsheetUIViewport extends RenderTwoDimensionalViewport {
       super.delegate as SpreadsheetUICellDelegateMixin;
 
   @override
-  set delegate(SpreadsheetUICellDelegateMixin value) {
-    super.delegate = value;
-  }
+  set delegate(SpreadsheetUICellDelegateMixin value) => super.delegate = value;
 
   Map<int, _ColumnSpan> _columnMetrics = <int, _ColumnSpan>{};
   Map<int, _RowSpan> _rowMetrics = <int, _RowSpan>{};
@@ -60,6 +58,8 @@ class RenderSpreadsheetUIViewport extends RenderTwoDimensionalViewport {
   double get _pinnedColumnsSize =>
       _lastPinnedColumn != null ? _columnMetrics[_lastPinnedColumn]!.size : 0.0;
 
+  bool get _isEmptyRow => delegate.isEmptyRow;
+
   @override
   SpreadsheetUIParentData parentDataOf(RenderBox child) =>
       child.parentData! as SpreadsheetUIParentData;
@@ -80,6 +80,7 @@ class RenderSpreadsheetUIViewport extends RenderTwoDimensionalViewport {
     double startOfPinnedColumn = 0;
 
     final Map<int, _ColumnSpan> newColumnMetrics = <int, _ColumnSpan>{};
+
     for (int column = 0; column < delegate.columnCount; column++) {
       final bool isPinned = column < delegate.pinnedColumnCount;
       final double startOffset =
@@ -114,6 +115,7 @@ class RenderSpreadsheetUIViewport extends RenderTwoDimensionalViewport {
         startOfPinnedColumn = span.size;
       }
     }
+
     assert(newColumnMetrics.length >= delegate.pinnedColumnCount);
     for (final _ColumnSpan span in _columnMetrics.values) {
       span.dispose();
@@ -131,16 +133,20 @@ class RenderSpreadsheetUIViewport extends RenderTwoDimensionalViewport {
       final double startOffset =
           isPinned ? startOfPinnedRow : startOfRegularRow;
       _RowSpan? span = _rowMetrics.remove(row);
+
       assert(needsDelegateRebuild || span != null);
+
       final SpreadsheetUIRow configuration =
           needsDelegateRebuild ? delegate.buildRow(row) : span!.configuration;
       span ??= _RowSpan();
+
       span.updateRow(
         isPinned: isPinned,
         configuration: configuration,
         startOffset: startOffset,
         height: configuration.height,
       );
+
       newRowMetrics[row] = span;
       if (!isPinned) {
         if (span.size >= verticalOffset.pixels && _firstNonPinnedRow == null) {
@@ -374,26 +380,49 @@ class RenderSpreadsheetUIViewport extends RenderTwoDimensionalViewport {
 
     if (_firstNonPinnedCell != null) {
       assert(_lastNonPinnedCell != null);
-      _clipCellsHandle.layer = context.pushClipRect(
-        needsCompositing,
-        offset,
-        Rect.fromLTWH(
-          _pinnedColumnsSize,
-          _pinnedRowsSize,
-          viewportDimension.width - _pinnedColumnsSize,
-          viewportDimension.height - _pinnedRowsSize,
-        ),
-        (PaintingContext context, Offset offset) {
-          _paintCells(
-            context: context,
-            offset: offset,
-            leading: _firstNonPinnedCell!,
-            trailing: _lastNonPinnedCell!,
-          );
-        },
-        clipBehavior: clipBehavior,
-        oldLayer: _clipCellsHandle.layer,
-      );
+      if (_isEmptyRow) {
+        _clipCellsHandle.layer = context.pushClipRect(
+          needsCompositing,
+          offset,
+          Rect.fromLTWH(
+            0,
+            _pinnedRowsSize,
+            viewportDimension.width,
+            viewportDimension.height - _pinnedRowsSize,
+          ),
+          (PaintingContext context, Offset offset) {
+            _paintCells(
+              context: context,
+              offset: offset,
+              leading: _firstNonPinnedCell!,
+              trailing: _lastNonPinnedCell!,
+            );
+          },
+          clipBehavior: clipBehavior,
+          oldLayer: _clipCellsHandle.layer,
+        );
+      } else {
+        _clipCellsHandle.layer = context.pushClipRect(
+          needsCompositing,
+          offset,
+          Rect.fromLTWH(
+            _pinnedColumnsSize,
+            _pinnedRowsSize,
+            viewportDimension.width - _pinnedColumnsSize,
+            viewportDimension.height - _pinnedRowsSize,
+          ),
+          (PaintingContext context, Offset offset) {
+            _paintCells(
+              context: context,
+              offset: offset,
+              leading: _firstNonPinnedCell!,
+              trailing: _lastNonPinnedCell!,
+            );
+          },
+          clipBehavior: clipBehavior,
+          oldLayer: _clipCellsHandle.layer,
+        );
+      }
     } else {
       _clipCellsHandle.layer = null;
     }
@@ -469,16 +498,25 @@ class RenderSpreadsheetUIViewport extends RenderTwoDimensionalViewport {
     final LinkedHashMap<Rect, SpreadsheetUIColumnDecoration> columnDecorations =
         LinkedHashMap<Rect, SpreadsheetUIColumnDecoration>();
 
-    for (int column = leading.column; column <= trailing.column; column++) {
-      final _ColumnSpan span = _columnMetrics[column]!;
-      if (span.configuration.decoration != null) {
-        final RenderBox leadingCell = getChildFor(
-          CellIndex(column: column, row: leading.row),
-        )!;
-        final RenderBox trailingCell = getChildFor(
-          CellIndex(column: column, row: trailing.row),
-        )!;
+    final LinkedHashMap<Rect, SpreadsheetUIRowDecoration> rowDecorations =
+        LinkedHashMap<Rect, SpreadsheetUIRowDecoration>();
 
+    if (_isEmptyRow && trailing.row == delegate.rowCount - 1) {
+      final _ColumnSpan span = _columnMetrics[0]!;
+      final RenderBox leadingCell = getChildFor(
+        CellIndex(column: leading.column, row: leading.row),
+      )!;
+      final RenderBox trailingCell = getChildFor(
+        CellIndex(column: trailing.column, row: trailing.row),
+      )!;
+
+      span.updateColumn(
+        configuration: span.configuration,
+        startOffset: 0.0,
+        width: 200,
+        isPinned: false,
+      );
+      if (span.configuration.decoration != null) {
         final Rect rect = Rect.fromPoints(
           parentDataOf(leadingCell).paintOffset! + offset,
           parentDataOf(trailingCell).paintOffset! +
@@ -490,10 +528,30 @@ class RenderSpreadsheetUIViewport extends RenderTwoDimensionalViewport {
           columnDecorations[rect] = span.configuration.decoration!;
         }
       }
-    }
+    } else {
+      for (int column = leading.column; column <= trailing.column; column++) {
+        final _ColumnSpan span = _columnMetrics[column]!;
+        if (span.configuration.decoration != null) {
+          final RenderBox leadingCell = getChildFor(
+            CellIndex(column: column, row: leading.row),
+          )!;
+          final RenderBox trailingCell = getChildFor(
+            CellIndex(column: column, row: trailing.row),
+          )!;
 
-    final LinkedHashMap<Rect, SpreadsheetUIRowDecoration> rowDecorations =
-        LinkedHashMap<Rect, SpreadsheetUIRowDecoration>();
+          final Rect rect = Rect.fromPoints(
+            parentDataOf(leadingCell).paintOffset! + offset,
+            parentDataOf(trailingCell).paintOffset! +
+                Offset(trailingCell.size.width, trailingCell.size.height) +
+                offset,
+          );
+
+          if (span.configuration.decoration != null) {
+            columnDecorations[rect] = span.configuration.decoration!;
+          }
+        }
+      }
+    }
 
     for (int row = leading.row; row <= trailing.row; row++) {
       final _RowSpan span = _rowMetrics[row]!;
@@ -511,9 +569,8 @@ class RenderSpreadsheetUIViewport extends RenderTwoDimensionalViewport {
               Offset(trailingCell.size.width, trailingCell.size.height) +
               offset,
         );
-        if (span.configuration.decoration != null) {
-          rowDecorations[rect] = span.configuration.decoration!;
-        }
+
+        rowDecorations[rect] = span.configuration.decoration!;
       }
     }
 
@@ -529,6 +586,7 @@ class RenderSpreadsheetUIViewport extends RenderTwoDimensionalViewport {
 
           decoration.paint(paintingDetails);
         });
+
         columnDecorations.forEach(
           (Rect rect, SpreadsheetUIDecoration decoration) {
             final SpreadsheetUIDecorationPaintDetails paintingDetails =
@@ -540,6 +598,7 @@ class RenderSpreadsheetUIViewport extends RenderTwoDimensionalViewport {
             decoration.paint(paintingDetails);
           },
         );
+
         break;
 
       case Axis.horizontal:
@@ -568,15 +627,28 @@ class RenderSpreadsheetUIViewport extends RenderTwoDimensionalViewport {
 
     for (int column = leading.column; column <= trailing.column; column++) {
       for (int row = leading.row; row <= trailing.row; row++) {
-        final RenderBox cell = getChildFor(
-          CellIndex(
-            column: column,
-            row: row,
-          ),
-        )!;
-        final SpreadsheetUIParentData cellParentData = parentDataOf(cell);
-        if (cellParentData.isVisible) {
-          context.paintChild(cell, offset + cellParentData.paintOffset!);
+        if (_isEmptyRow && row != delegate.rowCount - 1) {
+          final RenderBox cell = getChildFor(
+            CellIndex(
+              column: column,
+              row: row,
+            ),
+          )!;
+          final SpreadsheetUIParentData cellParentData = parentDataOf(cell);
+          if (cellParentData.isVisible) {
+            context.paintChild(cell, offset + cellParentData.paintOffset!);
+          }
+        } else {
+          final RenderBox cell = getChildFor(
+            CellIndex(
+              column: column,
+              row: row,
+            ),
+          )!;
+          final SpreadsheetUIParentData cellParentData = parentDataOf(cell);
+          if (cellParentData.isVisible && column == 0) {
+            context.paintChild(cell, offset + cellParentData.paintOffset!);
+          }
         }
       }
     }

@@ -6,6 +6,20 @@ typedef FlutterSpreadsheetUIRowBuilder<T> = Widget Function(
   T rowData,
 );
 
+class FlutterSpreadsheetUIEmptyRow {
+  FlutterSpreadsheetUIEmptyRow({
+    this.height = kDefaultRowHeight,
+    this.color,
+    this.borderSide,
+    this.builder,
+  });
+
+  double height;
+  Color? color;
+  BorderSide? borderSide;
+  WidgetBuilder? builder;
+}
+
 class FlutterSpreadsheetUIRow<T> {
   FlutterSpreadsheetUIRow({
     this.height = kDefaultRowHeight,
