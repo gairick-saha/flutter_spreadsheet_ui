@@ -1,5 +1,7 @@
 part of 'table.dart';
 
+const double kDefaultColumnWidth = 200;
+
 class _ColumnSpan implements Drag {
   double get startOffset => _startOffset;
   late double _startOffset;

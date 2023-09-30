@@ -20,14 +20,23 @@ class FlutterSpreadsheetUI extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SpreadsheetUI(
-      columns: columns.map((e) => SpreadsheetUIColumn(width: 200)).toList(),
-      rows: rows
-          .map((e) => SpreadsheetUIRow(
-                isFreezed:
-                    rows.first == e ? config?.pinnedFirstRow ?? false : false,
-                height: kDefaultRowHeight,
+      horizontalDetails:
+          config?.horizontalDetails ?? const ScrollableDetails.horizontal(),
+      verticalDetails:
+          config?.verticalDetails ?? const ScrollableDetails.vertical(),
+      columns: columns
+          .map((e) => SpreadsheetUIColumn(
+                width: e.width,
+                isFreezed: e.isFreezed,
               ))
           .toList(),
+      rows: rows
+          .map((e) => SpreadsheetUIRow(
+                isFreezed: config?.pinnedFirstRow ?? false,
+                height: e.height,
+              ))
+          .toList(),
+      freezeColumnRow: config?.pinnedFirstRow ?? false,
       diagonalDragBehavior: DiagonalDragBehavior.none,
       columnBuilder: (int index) => SpreadsheetUIColumn(
         width: columns[index].width,
@@ -42,31 +51,46 @@ class FlutterSpreadsheetUI extends StatelessWidget {
                           Theme.of(context).disabledColor,
                     ))
                 : BorderSide.none,
-            right: (columns[index].borderSide ??
+            right: columns[index].borderSide ??
                 config?.borderSide ??
                 BorderSide(
                   color: config?.borderColor ?? Theme.of(context).disabledColor,
-                )),
+                ),
           ),
         ),
       ),
+      columnRowBuilder: (int index) => SpreadsheetUIRow(
+        height: config?.columnRowHeight ?? kDefaultRowHeight,
+        isFreezed: config?.pinnedFirstRow ?? false,
+        decoration: SpreadsheetUIRowDecoration(
+          color: config?.columnRowColor ?? config?.backgroundColor,
+          border: SpreadsheetUIRowBorder(
+            top: config?.borderSide ??
+                BorderSide(
+                  color: config?.borderColor ?? Theme.of(context).disabledColor,
+                ),
+            bottom: config?.borderSide ??
+                BorderSide(
+                  color: config?.borderColor ?? Theme.of(context).disabledColor,
+                ),
+          ),
+        ),
+      ),
+      columnCellsBuilder: (context, cellIndex) {
+        final int columnIndex = cellIndex.column;
+        final column = columns[columnIndex];
+        return column.toWidget(context, cellIndex);
+      },
       rowBuilder: (int index) => SpreadsheetUIRow(
         height: rows[index].height,
         decoration: SpreadsheetUIRowDecoration(
+          color: rows[index].color ?? config?.backgroundColor,
           border: SpreadsheetUIRowBorder(
-            left: index == 0
-                ? (rows[index].borderSide ??
-                    config?.borderSide ??
-                    BorderSide(
-                      color: config?.borderColor ??
-                          Theme.of(context).disabledColor,
-                    ))
-                : BorderSide.none,
-            right: (rows[index].borderSide ??
+            bottom: rows[index].borderSide ??
                 config?.borderSide ??
                 BorderSide(
                   color: config?.borderColor ?? Theme.of(context).disabledColor,
-                )),
+                ),
           ),
         ),
       ),
@@ -77,11 +101,12 @@ class FlutterSpreadsheetUI extends StatelessWidget {
         final int columnIndex = cellIndex.column;
         final column = columns[columnIndex];
 
-        if (rowIndex == 0) {
-          return column.toWidget(context, cellIndex);
-        }
-
-        return row.toWidget(context, cellIndex);
+        return row.toWidget(
+          context,
+          cellIndex,
+          column.contentAlignment,
+          column.contentPadding,
+        );
       },
     );
   }

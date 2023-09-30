@@ -6,8 +6,10 @@ class SpreadsheetUI extends TwoDimensionalScrollView {
     required this.columns,
     required this.rows,
     SpreadsheetUIColumnBuilder? columnBuilder,
+    SpreadsheetUIRowBuilder? columnRowBuilder,
     SpreadsheetUIRowBuilder? rowBuilder,
     required SpreadsheetUICellBuilder cellBuilder,
+    required SpreadsheetUICellBuilder columnCellsBuilder,
     bool? primary,
     Axis mainAxis = Axis.vertical,
     ScrollableDetails horizontalDetails = const ScrollableDetails.horizontal(),
@@ -18,6 +20,7 @@ class SpreadsheetUI extends TwoDimensionalScrollView {
     ScrollViewKeyboardDismissBehavior keyboardDismissBehavior =
         ScrollViewKeyboardDismissBehavior.manual,
     Clip clipBehavior = Clip.hardEdge,
+    bool freezeColumnRow = true,
   }) : super(
           key: key,
           primary: primary,
@@ -30,14 +33,21 @@ class SpreadsheetUI extends TwoDimensionalScrollView {
           keyboardDismissBehavior: keyboardDismissBehavior,
           clipBehavior: clipBehavior,
           delegate: SpreadsheetUICellBuilderDelegate(
-            columnCount: columns.length,
-            rowCount: rows.length,
-            pinnedColumnCount:
-                columns.where((element) => element.isFreezed).length,
-            pinnedRowCount: rows.where((element) => element.isFreezed).length,
-            columnBuilder: columnBuilder ?? (int index) => columns[index],
-            rowBuilder: rowBuilder ?? (int index) => rows[index],
+            columns: columns,
+            rows: List.from([
+              SpreadsheetUIRow(
+                height: columnRowBuilder?.call(0).height ?? kDefaultRowHeight,
+                decoration: columnRowBuilder?.call(0).decoration,
+                isFreezed:
+                    columnRowBuilder?.call(0).isFreezed ?? freezeColumnRow,
+              ),
+              ...rows,
+            ]),
+            columnBuilder: columnBuilder,
+            columnRowBuilder: columnRowBuilder,
+            rowBuilder: rowBuilder,
             cellBuilder: cellBuilder,
+            columnCellsBuilder: columnCellsBuilder,
           ),
         );
 
@@ -52,9 +62,9 @@ class SpreadsheetUI extends TwoDimensionalScrollView {
         return false;
       },
       child: SizedBox(
-        width: columns.fold(
+        width: (delegate as SpreadsheetUICellBuilderDelegate).columns.fold(
             0, (previousValue, element) => previousValue! + element.width),
-        height: rows.fold(
+        height: (delegate as SpreadsheetUICellBuilderDelegate).rows.fold(
             0, (previousValue, element) => previousValue! + element.height),
         child: super.build(context),
       ),

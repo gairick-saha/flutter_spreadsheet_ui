@@ -21,8 +21,19 @@ class FlutterSpreadsheetUIRow<T> {
   T value;
   FlutterSpreadsheetUIRowBuilder<T> builder;
 
-  Widget toWidget(BuildContext context, CellIndex cellIndex) =>
-      builder(context, cellIndex, value);
+  Widget toWidget(
+    BuildContext context,
+    CellIndex cellIndex,
+    AlignmentGeometry contentAlignment,
+    EdgeInsetsGeometry contentPadding,
+  ) =>
+      Align(
+        alignment: contentAlignment,
+        child: Padding(
+          padding: contentPadding,
+          child: builder(context, cellIndex, value),
+        ),
+      );
 
   void update({
     double? height,

@@ -13,6 +13,9 @@ class FlutterSpreadsheetUIColumn<T> {
     this.borderSide,
     required this.value,
     required this.builder,
+    this.contentAlignment = Alignment.center,
+    this.contentPadding = kDefaultContentPadding,
+    this.isFreezed = false,
   });
 
   double width;
@@ -20,9 +23,21 @@ class FlutterSpreadsheetUIColumn<T> {
   BorderSide? borderSide;
   T value;
   FlutterSpreadsheetUIColumnBuilder<T> builder;
+  final AlignmentGeometry contentAlignment;
+  final EdgeInsetsGeometry contentPadding;
+  final bool isFreezed;
 
-  Widget toWidget(BuildContext context, CellIndex cellIndex) =>
-      builder(context, cellIndex, value);
+  Widget toWidget(BuildContext context, CellIndex cellIndex) => Align(
+        alignment: contentAlignment,
+        child: Padding(
+          padding: contentPadding,
+          child: builder(
+            context,
+            cellIndex,
+            value,
+          ),
+        ),
+      );
 
   void update({
     double? width,

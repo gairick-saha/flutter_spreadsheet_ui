@@ -1,7 +1,11 @@
 part of 'table.dart';
 
 mixin SpreadsheetUICellDelegateMixin on TwoDimensionalChildDelegate {
+  List<SpreadsheetUIColumn> get columns;
+
   int get columnCount;
+
+  List<SpreadsheetUIRow> get rows;
 
   int get rowCount;
 
@@ -18,30 +22,71 @@ class SpreadsheetUICellBuilderDelegate
     extends TwoDimensionalChildBuilderDelegate
     with SpreadsheetUICellDelegateMixin {
   SpreadsheetUICellBuilderDelegate({
-    required int columnCount,
-    required int rowCount,
-    int pinnedColumnCount = 0,
-    int pinnedRowCount = 0,
+    required List<SpreadsheetUIColumn> columns,
+    required List<SpreadsheetUIRow> rows,
     super.addRepaintBoundaries,
-    required SpreadsheetUIColumnBuilder columnBuilder,
-    required SpreadsheetUIRowBuilder rowBuilder,
+    required SpreadsheetUIColumnBuilder? columnBuilder,
+    SpreadsheetUIRowBuilder? rowBuilder,
+    SpreadsheetUIRowBuilder? columnRowBuilder,
     required SpreadsheetUICellBuilder cellBuilder,
-  })  : assert(columnCount >= 0),
-        assert(rowCount >= 0),
-        assert(pinnedColumnCount >= 0),
-        assert(pinnedRowCount >= 0),
-        assert(pinnedColumnCount <= columnCount),
-        assert(pinnedRowCount <= rowCount),
-        _rowBuilder = rowBuilder,
-        _columnBuilder = columnBuilder,
-        _pinnedColumnCount = pinnedColumnCount,
-        _pinnedRowCount = pinnedRowCount,
+    required SpreadsheetUICellBuilder columnCellsBuilder,
+  })  : assert(columns.isNotEmpty),
+        assert(rows.isNotEmpty),
+        _columns = columns,
+        _rows = rows,
+        _columnBuilder = (columnBuilder ??
+            (int index) => SpreadsheetUIColumn(
+                  width: kDefaultColumnWidth,
+                )),
+        _rowBuilder = ((int index) {
+          if (index == 0) {
+            return columnRowBuilder?.call(index) ??
+                SpreadsheetUIRow(
+                  height: kDefaultRowHeight,
+                );
+          }
+
+          return rowBuilder?.call(index - 1) ??
+              SpreadsheetUIRow(
+                height: kDefaultRowHeight,
+              );
+        }),
+        _pinnedColumnCount = columns
+            .where((element) =>
+                columnBuilder?.call(columns.indexOf(element)).isFreezed ??
+                element.isFreezed)
+            .length,
+        _pinnedRowCount = rows.where((element) {
+          final int rowIndex = rows.indexOf(element);
+          return rowIndex == 0
+              ? columnRowBuilder?.call(0).isFreezed ?? element.isFreezed
+              : rowBuilder?.call(rowIndex - 1).isFreezed ?? element.isFreezed;
+        }).length,
         super(
-          builder: (BuildContext context, ChildVicinity vicinity) =>
-              cellBuilder(context, vicinity as CellIndex),
-          maxXIndex: columnCount - 1,
-          maxYIndex: rowCount - 1,
+          builder: (BuildContext context, ChildVicinity vicinity) {
+            final CellIndex cellIndex = vicinity as CellIndex;
+            final columnIndex = cellIndex.column;
+            final rowIndex = cellIndex.row;
+
+            if (rowIndex == 0) {
+              return columnCellsBuilder(context, cellIndex);
+            }
+
+            final CellIndex rowCellIndex =
+                CellIndex(row: rowIndex - 1, column: columnIndex);
+            return cellBuilder(context, rowCellIndex);
+          },
+          maxXIndex: columns.length - 1,
+          maxYIndex: rows.length - 1,
         );
+
+  @override
+  List<SpreadsheetUIColumn> get columns => _columns;
+  List<SpreadsheetUIColumn> _columns;
+  set columns(List<SpreadsheetUIColumn> columns) {
+    _columns = columns;
+    notifyListeners();
+  }
 
   @override
   int get columnCount => maxXIndex! + 1;
@@ -65,6 +110,14 @@ class SpreadsheetUICellBuilderDelegate
       return;
     }
     _pinnedColumnCount = value;
+    notifyListeners();
+  }
+
+  @override
+  List<SpreadsheetUIRow> get rows => _rows;
+  List<SpreadsheetUIRow> _rows;
+  set rows(List<SpreadsheetUIRow> rows) {
+    _rows = rows;
     notifyListeners();
   }
 

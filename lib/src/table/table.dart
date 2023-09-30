@@ -15,6 +15,9 @@ part 'viewport_renderer.dart';
 part 'viewport.dart';
 part 'spreadsheet_ui.dart';
 
+const EdgeInsetsGeometry kDefaultContentPadding =
+    EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0);
+
 typedef SpreadsheetUIColumnBuilder = SpreadsheetUIColumn Function(
   int index,
 );
